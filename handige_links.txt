@@ -1,0 +1,11 @@
+
+* Threading *
+- http://www.tutorialspoint.com/javaexamples/thread_procon.htm 
+- http://javarevisited.blogspot.nl/2012/02/producer-consumer-design-pattern-with.html
+
+* webserver examples *
+- http://www.kieser.net/linux/java_server.html
+
+* HTTPS / SSL *
+- http://download.java.net/jdk7/archive/b123/docs/api/javax/net/ssl/SSLSocket.html
+- http://www.herongyang.com/JDK/HTTPS-Server-Test-Program-HttpsHello.html
