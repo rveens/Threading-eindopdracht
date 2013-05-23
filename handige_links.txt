@@ -3,7 +3,7 @@
 - http://www.tutorialspoint.com/javaexamples/thread_procon.htm 
 - http://javarevisited.blogspot.nl/2012/02/producer-consumer-design-pattern-with.html
 
-* webserver examples *
+* Webserver examples *
 - http://www.kieser.net/linux/java_server.html
 
 * HTTPS / SSL *

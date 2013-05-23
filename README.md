@@ -1,3 +1,7 @@
+Onduidelijkheden:
+- In de java threading tutorial wordt genoemd dat sleep() resources opgeeft aan andere threads. Dit was toch busy waiting
+    en juist slecht? zie: http://docs.oracle.com/javase/tutorial/essential/concurrency/sleep.html
+
 Threading / Security & Hacking - Eindopdracht
 ======================
 
