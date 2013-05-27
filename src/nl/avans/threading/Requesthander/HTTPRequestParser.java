@@ -1,10 +1,9 @@
-package nl.avans.threading;
+package nl.avans.threading.Requesthander;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Scanner;
 
 /**
  * Created with IntelliJ IDEA.
@@ -79,7 +78,6 @@ public class HTTPRequestParser {
             // start with a whitespace is a bad request
             return 400;
         }
-
 
         return ret;
     }
