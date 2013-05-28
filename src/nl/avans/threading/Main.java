@@ -17,7 +17,11 @@ public class Main {
             /* start servers */
             c.start();
             s.start();
+
+            s.join();
         } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (InterruptedException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
     }

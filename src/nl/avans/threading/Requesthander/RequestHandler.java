@@ -1,5 +1,8 @@
 package nl.avans.threading.Requesthander;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Socket;
 
 /**
@@ -18,10 +21,9 @@ public class RequestHandler
         this.sok = sok;
     }
 
-    public void run()
-    {
-        // TODO gebruik HTTPRequestParser
-        // Gebruik BufferedReader voor lezen van een socket
+    public void run() throws IOException {
+        HTTPRequestParser reqparser = new HTTPRequestParser(new InputStreamReader(sok.getInputStream()));
+        System.out.println(reqparser.parseRequest());
 
         // Gebruik DataOutPutStream voor schrijven naar een socket.
 

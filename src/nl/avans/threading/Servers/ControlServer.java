@@ -18,15 +18,18 @@ public class ControlServer extends Server
     }
 
     @Override
-    public void Run() throws IOException
-    {
+    public void run() {
         while (true) {
-            /* Wait for a new socket */
-            Socket sok = socketListen.accept();
-            /* Create a requesthandler instance and give it the socket */
-            // TODO request handler for ControlServer
+            try {
+                /* Wait for a new socket */
+                Socket sok = socketListen.accept();
+                /* Create a requesthandler instance and give it the socket */
+                // TODO request handler for ControlServer
 
-            /* Do the actual handling */
+                /* Do the actual handling */
+            } catch (IOException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
         }
     }
 }

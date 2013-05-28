@@ -22,18 +22,23 @@ public class Server extends Thread {
         socketListen = new ServerSocket(port);
     }
 
-    public void Run() throws IOException
-    {
+    @Override
+    public void run() {
+        Socket sok = null;
+
         while (true) {
-            /* Wait for a new socket */
-            Socket sok = socketListen.accept();
-            /* Create a requesthandler instance and give it the socket */
-            RequestHandler handler = new RequestHandler(sok);
+            try {
+                /* wait for a request */
+                sok = socketListen.accept();
+                /* Create a requesthandler (thread) instance and give it the socket */
+                RequestHandler handler = new RequestHandler(sok);
+                /* Create the thread */
+                handler.run();
 
-            /* Do the actual handling */
-            handler.run();
-
-            /* keep looping and look for the next request */
+                /* And keep going */
+            } catch (IOException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
         }
     }
 }
