@@ -32,6 +32,8 @@ public class Server extends Thread {
 
             /* Do the actual handling */
             handler.run();
+
+            /* keep looping and look for the next request */
         }
     }
 }

@@ -15,8 +15,8 @@ public class Main {
             Server s = new Server(8080);
 
             /* start servers */
-            c.Run();
-            s.Run();
+            c.start();
+            s.start();
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
