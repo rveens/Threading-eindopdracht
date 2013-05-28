@@ -1,10 +1,14 @@
 package nl.avans.threading.Servers;
 
 import nl.avans.threading.Requesthander.RequestHandler;
+import nl.avans.threading.WebserverConstants;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,7 +19,8 @@ import java.net.Socket;
  */
 public class Server extends Thread {
 
-    ServerSocket socketListen;
+    ServerSocket socketListen;  // Serversocket that wait (err, blocking call) for requests
+    ExecutorService pool;       // Thread pool for limiting thread creation
 
     public Server(int port) throws IOException
     {
@@ -24,21 +29,21 @@ public class Server extends Thread {
 
     @Override
     public void run() {
+
         Socket sok = null;
+        pool = Executors.newFixedThreadPool(WebserverConstants.MAX_CONCURRENT_THREADS);
 
         while (true) {
             try {
-                /* wait for a request */
+                /* Wait for a request */
                 sok = socketListen.accept();
-                /* Create a requesthandler (thread) instance and give it the socket */
+                /* Execute the request handling on another thread */
                 RequestHandler handler = new RequestHandler(sok);
-                /* Create the thread */
-                handler.run();
-
-                /* And keep going */
+                pool.execute(handler);
             } catch (IOException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
+            /* Keep going */
         }
     }
 }

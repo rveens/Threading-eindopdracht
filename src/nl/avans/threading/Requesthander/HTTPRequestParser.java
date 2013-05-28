@@ -5,7 +5,6 @@ import nl.avans.threading.WebserverConstants;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URLDecoder;
 import java.util.Hashtable;
 
 /**
@@ -18,6 +17,7 @@ import java.util.Hashtable;
 public class HTTPRequestParser {
 
     BufferedReader bufferedReader;
+    boolean isValid;
     int[] httpVersion;
     String httpMethod;
     String url;
@@ -33,14 +33,19 @@ public class HTTPRequestParser {
         url = "";
     }
 
-    public int parseRequest() throws IOException {
-        int responseCode;
+    /*
+    * Validate the HTTP request
+    *
+    * @return boolean that represents the validity of the request
+    */
+    public boolean validateRequest() throws IOException {
         String initialRequestLine;      // Bijvoorbeeld:  GET / HTTP/1.1
         String initialRequestLineWords[];
         String[] temp;
         int i, idx; // idx: index of of the url
 
-        responseCode = 200; // We gaan er vanuit dat alles goed gaat
+        /* We gaan er vanuit dat alles helemaal goed gaat... */
+        isValid = true;
 
         /* Initial Request Line afhandelen */
         initialRequestLine = bufferedReader.readLine();
@@ -48,18 +53,20 @@ public class HTTPRequestParser {
         /* Controleer de Initial Request Line op fouten */
         if (initialRequestLine == null || initialRequestLine.length() == 0) {
             // Waarschijnlijk een connectie fout
-            return 400;
+            isValid = false;
+            return isValid;
         }
         if (Character.isWhitespace(initialRequestLine.charAt(0))) {
             // Eerste char mag geen whitespace zijn
-            return 400;
+            isValid = false;
+            return isValid;
         }
 
         /* split de Initial Request Line op in woorden */
         initialRequestLineWords = initialRequestLine.split("\\s"); // Deel op in woorden
         if (initialRequestLineWords.length != 3) {
             // Als de Initial Request Line niet uit drie woorden bestaat dan is het een bad request.
-            return 400;
+            isValid = false;
         }
         if (initialRequestLineWords[2].indexOf("HTTP/") == 0 &&
                 initialRequestLineWords[2].indexOf('.') > 5) {
@@ -69,11 +76,11 @@ public class HTTPRequestParser {
                 httpVersion[0] = Integer.parseInt(temp[0]);
                 httpVersion[1] = Integer.parseInt(temp[1]);
             } catch(NumberFormatException nfe) {
-                return 400;
+                isValid = false;
             }
         } else {
             // Derde woord is niet correct
-            return 400;
+            isValid = false;
         }
 
         if (initialRequestLineWords[0].equals(WebserverConstants.GET) ||
@@ -82,16 +89,17 @@ public class HTTPRequestParser {
             url = initialRequestLineWords[1];
             parseHeaders();
             if (headers == null)
-                responseCode = 400;
+                isValid = false;
         } else {
             // Het eerste woord klopt niet, of de methode wordt niet niet ondersteund.
-            return 400;
+            isValid = false;
         }
 
+        /* http 1.1 vereist een host header */
         if (httpVersion[0] == 1 && httpVersion[1] >= 1 && getHeader("Host") == null)
-            return 400;
+            isValid = false;
 
-        return responseCode;
+        return isValid;
     }
 
     /* Read through the lines of the header and put them in a hashtable */

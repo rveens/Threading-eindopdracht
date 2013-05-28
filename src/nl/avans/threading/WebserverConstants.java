@@ -68,4 +68,6 @@ public class WebserverConstants {
             MIMETYPE_TEXT_HTML_UTF_8 = "text/html; charset=utf-8",
             MIMETYPE_TEXT_PLAIN_UTF_8 = "text/plain; charset=utf-8",
             MIMETYPE_TEXT_XML_UTF_8 = "text/xml; charset=utf-8";
+
+    public final static int MAX_CONCURRENT_THREADS = 10;
 }

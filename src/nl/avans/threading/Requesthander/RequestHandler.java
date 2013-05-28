@@ -12,21 +12,29 @@ import java.net.Socket;
  * Time: 3:29 PM
  * To change this template use File | Settings | File Templates.
  */
-public class RequestHandler
-{
+public class RequestHandler implements Runnable {
     private Socket sok;
+    private HTTPRequestParser reqparser;
 
     public RequestHandler(Socket sok)
     {
         this.sok = sok;
     }
 
-    public void run() throws IOException {
-        HTTPRequestParser reqparser = new HTTPRequestParser(new InputStreamReader(sok.getInputStream()));
-        System.out.println(reqparser.parseRequest());
+    public void run() {
+        try {
+            reqparser = new HTTPRequestParser(new InputStreamReader(sok.getInputStream()));
+            if(reqparser.validateRequest())
+                System.out.println("Valid request");
+            else
+                System.out.println("Invalid request");
 
-        // Gebruik DataOutPutStream voor schrijven naar een socket.
+            // Gebruik DataOutPutStream voor schrijven naar een socket.
 
-        // Sluit de socket
+            // Sluit de socket
+            sok.close();
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
     }
 }
