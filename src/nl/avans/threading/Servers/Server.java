@@ -29,12 +29,11 @@ public class Server extends Thread {
 
     @Override
     public void run() {
-
-        Socket sok = null;
         pool = Executors.newFixedThreadPool(WebserverConstants.MAX_CONCURRENT_THREADS);
 
         while (true) {
             try {
+                Socket sok = null;
                 /* Wait for a request */
                 sok = socketListen.accept();
                 /* Execute the request handling on another thread */

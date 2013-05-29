@@ -2,6 +2,7 @@ package nl.avans.threading.Requesthander;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
@@ -21,6 +22,7 @@ public class RequestHandler implements Runnable {
         this.sok = sok;
     }
 
+    @Override
     public void run() {
         try {
             reqparser = new HTTPRequestParser(new InputStreamReader(sok.getInputStream()));
@@ -30,9 +32,8 @@ public class RequestHandler implements Runnable {
                 System.out.println("Invalid request");
 
             // Gebruik DataOutPutStream voor schrijven naar een socket.
-
             // Sluit de socket
-            sok.close();
+            //sok.close();
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
