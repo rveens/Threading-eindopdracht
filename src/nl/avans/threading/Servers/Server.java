@@ -1,12 +1,11 @@
 package nl.avans.threading.Servers;
 
-import nl.avans.threading.Requesthander.RequestHandler;
+import nl.avans.threading.Requesthandling.RequestHandler;
 import nl.avans.threading.WebserverConstants;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

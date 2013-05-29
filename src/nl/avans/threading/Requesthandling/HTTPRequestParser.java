@@ -1,4 +1,4 @@
-package nl.avans.threading.Requesthander;
+package nl.avans.threading.Requesthandling;
 
 import nl.avans.threading.WebserverConstants;
 

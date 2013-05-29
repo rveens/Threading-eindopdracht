@@ -1,6 +1,9 @@
 Onduidelijkheden:
-- In de java threading tutorial wordt genoemd dat sleep() resources opgeeft aan andere threads. Dit was toch busy waiting
+x In de java threading tutorial wordt genoemd dat sleep() resources opgeeft aan andere threads. Dit was toch busy waiting
     en juist slecht? zie: http://docs.oracle.com/javase/tutorial/essential/concurrency/sleep.html
+- Mag ik er vanuit gaan dat de logger thread, control server en de server deel geen deel uit maken van de thread pool?
+- De enige verschillen tussen http1.1 en http1.0 zijn de verplichte host header en de socket die niet meteen sluit?
+- Wat moet de logger thread doen in zijn run methode? Log messages naar de console printen of ergens opslaan?
 
 Threading / Security & Hacking - Eindopdracht
 ======================
