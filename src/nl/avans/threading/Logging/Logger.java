@@ -17,11 +17,16 @@ public class Logger extends Thread
     private int currentSize;    // Huidige grootte van de queue.
     private File logFile;
 
-    public Logger()
+    public Logger(String logFilePath)
     {
         fifoQueue = new String[WebserverConstants.LOGGER_QUEUE_MAX_SIZE];
         currentSize = 0;
+
         // TODO log file openen
+        logFile = new File(logFilePath);
+        if (!logFile.exists()) {
+
+        }
     }
 
     /*
