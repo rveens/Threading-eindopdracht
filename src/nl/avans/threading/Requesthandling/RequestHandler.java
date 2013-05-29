@@ -24,12 +24,15 @@ public class RequestHandler implements Runnable {
     public void run() {
         try {
             reqparser = new HTTPRequestParser(new InputStreamReader(sok.getInputStream()));
-            if(reqparser.validateRequest())
+            try {
+                reqparser.validateRequest();
                 System.out.println("Valid request");
-            else
+            } catch (HTTPInvalidRequestException e) {
+                e.printStackTrace();
                 System.out.println("Invalid request");
-
+            }
             // Gebruik DataOutPutStream voor schrijven naar een socket.
+
             // Sluit de socket
             //sok.close();
         } catch (IOException e) {

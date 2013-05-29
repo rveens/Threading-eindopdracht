@@ -3,6 +3,7 @@ package nl.avans.threading.Logging;
 import nl.avans.threading.WebserverConstants;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Created with IntelliJ IDEA.
@@ -13,7 +14,7 @@ import java.io.File;
  */
 public class Logger extends Thread
 {
-    private String[] fifoQueue; // De queue, dit is een verplichtte string-array.
+    private String[] fifoQueue; // De queue, dit is een verplichtte string-array. TODO fi-lo veranderen in fifo queue
     private int currentSize;    // Huidige grootte van de queue.
     private File logFile;
 
@@ -25,7 +26,11 @@ public class Logger extends Thread
         // TODO log file openen
         logFile = new File(logFilePath);
         if (!logFile.exists()) {
-
+            try {
+                logFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
         }
     }
 

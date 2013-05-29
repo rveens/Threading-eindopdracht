@@ -38,7 +38,7 @@ public class HTTPRequestParser {
     *
     * @return boolean that represents the validity of the request
     */
-    public boolean validateRequest() throws IOException {
+    public void validateRequest() throws IOException, HTTPInvalidRequestException {
         String initialRequestLine;      // Bijvoorbeeld:  GET / HTTP/1.1
         String initialRequestLineWords[];
         String[] temp;
@@ -53,20 +53,18 @@ public class HTTPRequestParser {
         /* Controleer de Initial Request Line op fouten */
         if (initialRequestLine == null || initialRequestLine.length() == 0) {
             // Waarschijnlijk een connectie fout
-            isValid = false;
-            return isValid;
+            throw new HTTPInvalidRequestException();
         }
         if (Character.isWhitespace(initialRequestLine.charAt(0))) {
             // Eerste char mag geen whitespace zijn
-            isValid = false;
-            return isValid;
+            throw new HTTPInvalidRequestException();
         }
 
         /* split de Initial Request Line op in woorden */
         initialRequestLineWords = initialRequestLine.split("\\s"); // Deel op in woorden
         if (initialRequestLineWords.length != 3) {
             // Als de Initial Request Line niet uit drie woorden bestaat dan is het een bad request.
-            isValid = false;
+            throw new HTTPInvalidRequestException();
         }
         if (initialRequestLineWords[2].indexOf("HTTP/") == 0 &&
                 initialRequestLineWords[2].indexOf('.') > 5) {
@@ -76,11 +74,11 @@ public class HTTPRequestParser {
                 httpVersion[0] = Integer.parseInt(temp[0]);
                 httpVersion[1] = Integer.parseInt(temp[1]);
             } catch(NumberFormatException nfe) {
-                isValid = false;
+                throw new HTTPInvalidRequestException();
             }
         } else {
             // Derde woord is niet correct
-            isValid = false;
+            throw new HTTPInvalidRequestException();
         }
 
         if (initialRequestLineWords[0].equals(WebserverConstants.GET) ||
@@ -89,17 +87,15 @@ public class HTTPRequestParser {
             url = initialRequestLineWords[1];
             parseHeaders();
             if (headers == null)
-                isValid = false;
+                throw new HTTPInvalidRequestException();
         } else {
             // Het eerste woord klopt niet, of de methode wordt niet niet ondersteund.
-            isValid = false;
+            throw new HTTPInvalidRequestException();
         }
 
         /* http 1.1 vereist een host header */
         if (httpVersion[0] == 1 && httpVersion[1] >= 1 && getHeader("Host") == null)
-            isValid = false;
-
-        return isValid;
+            throw new HTTPInvalidRequestException();
     }
 
     /* Read through the lines of the header and put them in a hashtable */
