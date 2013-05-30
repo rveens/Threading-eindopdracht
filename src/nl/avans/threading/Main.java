@@ -1,5 +1,6 @@
 package nl.avans.threading;
 
+import nl.avans.threading.Logging.Logger;
 import nl.avans.threading.Servers.ControlServer;
 import nl.avans.threading.Servers.Server;
 
@@ -14,11 +15,15 @@ public class Main {
             ControlServer c = new ControlServer(8081);
             Server s = new Server(8080);
 
+            /* start de logger */
+            Logger logger = new Logger("/home/rick/Desktop/kaas12345"); // TODO logfile locatie ophalen uit settings-bestand
+            logger.start();
+
             /* start servers */
             c.start();
             s.start();
 
-            s.join();
+            s.join(); // Wacht op de server thread! Als deze sluit eindigd het programma
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (InterruptedException e) {
