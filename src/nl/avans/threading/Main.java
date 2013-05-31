@@ -20,6 +20,8 @@ public class Main {
             Logger logger = new Logger("/home/rick/Desktop/kaas12345"); // TODO logfile locatie ophalen uit settings-bestand
             logger.start();
 
+            logger.LogMessage("Dit is een test");
+
             /* start servers */
             c.start();
             s.start();
