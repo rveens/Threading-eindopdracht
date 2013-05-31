@@ -27,19 +27,20 @@ public class RequestHandler implements Runnable {
     @Override
     public void run() {
         try {
-            /* 1 - parsen van request */
             reqparser = new HTTPRequestParser(new InputStreamReader(sok.getInputStream()));
             try {
+                /* 1 - parsen van request */
                 reqparser.validateRequest();
-                System.out.println("Valid request");
+
+                /* 2 - bestand ophalen of reageren op POST */
+                // TODO functie maken voor afhandelen get, post
+
+                /* 3 - response terugsturen */
+                sendResponse(200, reqparser.getHttpVersion());
             } catch (HTTPInvalidRequestException e) {
                 e.printStackTrace();
-                System.out.println("Invalid request");
+                sendResponse(400, reqparser.getHttpVersion());
             }
-            /* 2 - bestand ophalen of reageren op POST */
-
-            /* 3 - response terugsturen */
-            sendResponse(200, reqparser.getHttpVersion());
 
             // Sluit de socket -> niet met http1.1
             sok.close();
