@@ -15,10 +15,10 @@ public class DataIOHandler {
     Connection dbConnection;
 
     //CONFIGURATION//
-    String dbUrl = "jdbc:mysql://localhost:3306/";
-    String dbTable = "webservAuth";
-    String dbUsername = "root";
-    String dbPassword = "fDb4tcwT38Dd";
+    //String dbUrl = "jdbc:mysql://localhost:3306/";
+    //String dbTable = "webservAuth";
+    //String dbUsername = "root";
+    //String dbPassword = "fDb4tcwT38Dd";
 
     public DataIOHandler()
     {
@@ -45,7 +45,7 @@ public class DataIOHandler {
     {
         String[] result = null;
         try {
-            dbConnection = DriverManager.getConnection(dbUrl + dbTable, dbUsername, dbPassword);
+            dbConnection = DriverManager.getConnection(Settings.dbUrl + Settings.dbName, Settings.dbUsername, Settings.dbPassword);
             PreparedStatement prepStatement = dbConnection.prepareStatement("SELECT * FROM users where name = (?)");
             prepStatement.setString(1, username);
             ResultSet resultSet = prepStatement.executeQuery();

@@ -47,7 +47,7 @@ public class SettingsIOHandler {
             {
                 element = (Element) node;
                 Settings.dbUrl = element.getElementsByTagName("URL").item(0).getTextContent();
-                Settings.dbTable = element.getElementsByTagName("tablename").item(0).getTextContent();
+                Settings.dbName = element.getElementsByTagName("database").item(0).getTextContent();
                 Settings.dbUsername = element.getElementsByTagName("username").item(0).getTextContent();
                 Settings.dbPassword = element.getElementsByTagName("password").item(0).getTextContent();
             }
@@ -62,6 +62,7 @@ public class SettingsIOHandler {
                 Settings.controlPort = Integer.parseInt(element.getElementsByTagName("control-port").item(0).getTextContent());
                 Settings.webRoot = element.getElementsByTagName("web-root").item(0).getTextContent();
                 Settings.defaultPage = element.getElementsByTagName("default-page").item(0).getTextContent();
+                Settings.logLocation = element.getElementsByTagName("log-location").item(0).getTextContent();
             }
             System.out.println("Settings loaded into Application");
 
@@ -81,6 +82,6 @@ public class SettingsIOHandler {
      */
     public static void saveChanges(int webPort, int controlPort, String webRoot, String defaultPage)
     {
-
+        //TODO prevent xml-injection by escaping characters like '<' and "'"
     }
 }

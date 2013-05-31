@@ -2,7 +2,7 @@
 <settings>
     <DB-settings>
         <URL>jdbc:mysql://localhost:3306/</URL>
-        <tablename>webservAuth</tablename>
+        <database>webservAuth</database>
         <username>root</username>
         <password>fDb4tcwT38Dd</password>
     </DB-settings>
@@ -11,5 +11,6 @@
         <control-port>8081</control-port>
         <web-root>htdocs</web-root>
         <default-page>index.html</default-page>
+        <log-location>log.txt</log-location>
     </server-settings>
 </settings>

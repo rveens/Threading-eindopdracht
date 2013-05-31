@@ -9,7 +9,7 @@ package nl.avans.threading;
 public class Settings {
     //DB-settings//
     public static String dbUrl = "jdbc:mysql://localhost:3306/";
-    public static String dbTable = "webservAuth";
+    public static String dbName = "webservAuth";
     public static String dbUsername = "root";
     public static String dbPassword = "fDb4tcwT38Dd";
 
@@ -18,4 +18,5 @@ public class Settings {
     public static int controlPort = 81;
     public static String webRoot = "";
     public static String defaultPage = "";
+    public static String logLocation = "log.txt";
 }
