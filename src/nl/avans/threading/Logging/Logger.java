@@ -19,13 +19,12 @@ public class Logger extends Thread
     private String[] fifoQueue;             // De queue, dit is een string-array. Dit is verplicht namens de opdracht.
     private int startIndex;                 // Start van de circular queue
     private int endIndex;                   // Einde van de circular queue
-    private final Semaphore currentSize =   // Een semaphore die de huidige grootte van de queue representeert.
-            new Semaphore(WebserverConstants.LOGGER_QUEUE_MAX_SIZE, true);
+    private int currentSize;
 
     public Logger(String logFilePath)
     {
         fifoQueue = new String[WebserverConstants.LOGGER_QUEUE_MAX_SIZE];
-        startIndex = endIndex = 0;
+        currentSize = startIndex = endIndex = 0;
 
         try {
             /* open de file */
@@ -44,22 +43,34 @@ public class Logger extends Thread
 
     /*
     * Logmessages toevoegen aan de queue
-    * */
-    public void LogMessage(String newMessage)
+    */
+    public void LogMessage(final String newMessage)
     {
-        // TODO add timestamp etc to message
-        try {
-            currentSize.acquire();
+        new Thread() {
+            public void run()
+            {
+                // TODO add timestamp etc to message
+                synchronized (fifoQueue) {
+                    while (currentSize == WebserverConstants.LOGGER_QUEUE_MAX_SIZE - 1) {
+                        try {
+                            fifoQueue.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        }
+                    }
 
-            /* zet de nieuwe message vooraan in de queue */
-            fifoQueue[endIndex] = newMessage;
-            /* vergroot de eindmarkeering met 1 */
-            endIndex = (endIndex+1) % fifoQueue.length;
+                    /* zet de nieuwe message vooraan in de queue */
+                    fifoQueue[endIndex] = newMessage;
+                    /* vergroot de eindmarkeering met 1 */
+                    endIndex = (endIndex+1) % fifoQueue.length;
+                    currentSize++;
 
-            currentSize.release();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+                    /* Maak de logger wakker */
+                    fifoQueue.notify();
+                }
+            }
+        }.start();
+
     }
 
     /*
@@ -72,26 +83,37 @@ public class Logger extends Thread
         super.run();
 
         synchronized (fifoQueue) {
-            try {
-                currentSize.acquire();
+            while (true) {
 
-                /* maak een writer object aan. Als de file niet bestaat wordt deze bij deze aangemaakt */
-                BufferedWriter out = new BufferedWriter(new FileWriter(logFile, true));
+                /* Mocht de queue leeg zijn, dan moet er worden gewacht */
+                while (currentSize == 0) {
+                    try {
+                        fifoQueue.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    }
+                }
 
-                /* schrijf de regel vooraan in de queue weg */
-                out.write(fifoQueue[startIndex]);
-                out.newLine();
-                /* verklein de beginmarkeering met 1 */
-                startIndex = (startIndex+1) % fifoQueue.length;
+                try {
+                    /* maak een writer object aan. Als de file niet bestaat wordt deze bij deze aangemaakt */
+                    BufferedWriter out = new BufferedWriter(new FileWriter(logFile, true));
 
-                /* sluit de writer */
-                out.close(); // NIET VERGETEN
+                    /* schrijf de regel vooraan in de queue weg */
+                    if (fifoQueue[startIndex] != null) {
+                        out.write(fifoQueue[startIndex]);
+                        out.newLine();
+                    }
+                    /* verklein de beginmarkeering met 1 */
+                    startIndex = (startIndex+1) % fifoQueue.length;
 
-                currentSize.release();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                    /* sluit de writer */
+                    out.close(); // NIET VERGETEN
+                    currentSize--;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                /* maak een thread wakker die een bericht wil loggen */
+                fifoQueue.notify();
             }
         }
     }

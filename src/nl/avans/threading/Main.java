@@ -12,19 +12,23 @@ public class Main {
     {
         SettingsIOHandler.loadSettings();
         try {
+            Logger logger = new Logger("/home/rick/Desktop/kaas12345"); // TODO logfile locatie ophalen uit settings-bestand
+
             /* create server instances */
-            ControlServer c = new ControlServer(Settings.controlPort);
-            Server s = new Server(Settings.webPort);
+            ControlServer c = new ControlServer(logger, Settings.controlPort);
+            Server s = new Server(logger, Settings.webPort);
+
+            // TODO test weghalen
+            logger.LogMessage("Dit is een test");
 
             /* start de logger */
-            Logger logger = new Logger("/home/rick/Desktop/kaas12345"); // TODO logfile locatie ophalen uit settings-bestand
             logger.start();
 
             /* start servers */
             c.start();
             s.start();
 
-            s.join(); // Wacht op de server thread! Als deze sluit eindigd het programma
+            s.join(); // Wacht op de server thread! Als deze sluit eindigd het programma //TODO wachten op controlserver?
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (InterruptedException e) {

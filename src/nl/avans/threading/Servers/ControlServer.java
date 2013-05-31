@@ -1,5 +1,7 @@
 package nl.avans.threading.Servers;
 
+import nl.avans.threading.Logging.Logger;
+
 import java.io.IOException;
 import java.net.Socket;
 
@@ -12,9 +14,9 @@ import java.net.Socket;
  */
 public class ControlServer extends Server
 {
-    public ControlServer(int port) throws IOException
+    public ControlServer(Logger logger, int port) throws IOException
     {
-        super(port);
+        super(logger, port);
     }
 
     @Override
