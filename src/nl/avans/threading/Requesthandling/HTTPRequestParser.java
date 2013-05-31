@@ -16,13 +16,12 @@ import java.util.Hashtable;
  */
 public class HTTPRequestParser {
 
-    BufferedReader bufferedReader;
-    boolean isValid;
-    int[] httpVersion;
-    String httpMethod;
-    String url;
-    Hashtable params;
-    Hashtable headers;
+    private BufferedReader bufferedReader;
+    private int[] httpVersion;
+    private String httpMethod;
+    private String url;
+    private Hashtable params;
+    private Hashtable headers;
 
     public HTTPRequestParser(InputStreamReader isr)
     {
@@ -43,9 +42,6 @@ public class HTTPRequestParser {
         String initialRequestLineWords[];
         String[] temp;
         int i, idx; // idx: index of of the url
-
-        /* We gaan er vanuit dat alles helemaal goed gaat... */
-        isValid = true;
 
         /* Initial Request Line afhandelen */
         initialRequestLine = bufferedReader.readLine();
@@ -84,6 +80,7 @@ public class HTTPRequestParser {
         if (initialRequestLineWords[0].equals(WebserverConstants.GET) ||
                 initialRequestLineWords[0].equals(WebserverConstants.POST)) {
             // TODO parameters in de url ondersteunen
+            httpMethod = initialRequestLineWords[0];
             url = initialRequestLineWords[1];
             parseHeaders();
             if (headers == null)
@@ -122,5 +119,17 @@ public class HTTPRequestParser {
             return (String) headers.get(key.toLowerCase());
         else
             return null;
+    }
+
+    public String getHttpMethod() {
+        return httpMethod;
+    }
+
+    public int[] getHttpVersion() {
+        return httpVersion;
+    }
+
+    public String getUrl() {
+        return url;
     }
 }
