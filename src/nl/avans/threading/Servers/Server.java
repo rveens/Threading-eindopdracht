@@ -1,5 +1,6 @@
 package nl.avans.threading.Servers;
 
+import nl.avans.threading.Logging.Logger;
 import nl.avans.threading.Requesthandling.RequestHandler;
 import nl.avans.threading.WebserverConstants;
 
@@ -21,7 +22,7 @@ public class Server extends Thread {
     ServerSocket socketListen;  // Serversocket that wait (err, blocking call) for requests
     ExecutorService pool;       // Thread pool for limiting thread creation
 
-    public Server(int port) throws IOException
+    public Server(Logger logger, int port) throws IOException
     {
         socketListen = new ServerSocket(port);
     }
