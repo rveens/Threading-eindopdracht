@@ -33,7 +33,7 @@ public class RequestHandler implements Runnable {
             }
             // Gebruik DataOutPutStream voor schrijven naar een socket.
 
-            // Sluit de socket
+            // Sluit de socket -> niet met http1.1
             //sok.close();
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

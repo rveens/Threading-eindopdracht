@@ -19,7 +19,7 @@ public class Logger extends Thread
     private String[] fifoQueue;             // De queue, dit is een string-array. Dit is verplicht namens de opdracht.
     private int startIndex;                 // Start van de circular queue
     private int endIndex;                   // Einde van de circular queue
-    private final Semaphore currentSize =   // Een semaphore die de huidige grootte van de queue representeert.
+    private final Semaphore currentSize =   // Een semaphore die de huidige grootte van de queue representeert. Zorgt er ook voor dat threads moeten wachten.
             new Semaphore(WebserverConstants.LOGGER_QUEUE_MAX_SIZE, true);
 
     public Logger(String logFilePath)
@@ -48,17 +48,19 @@ public class Logger extends Thread
     public void LogMessage(String newMessage)
     {
         // TODO add timestamp etc to message
-        try {
-            currentSize.acquire();
+        synchronized (fifoQueue) {
+            try {
+                currentSize.acquire();
 
-            /* zet de nieuwe message vooraan in de queue */
-            fifoQueue[endIndex] = newMessage;
-            /* vergroot de eindmarkeering met 1 */
-            endIndex = (endIndex+1) % fifoQueue.length;
+                /* zet de nieuwe message vooraan in de queue */
+                fifoQueue[endIndex] = newMessage;
+                /* vergroot de eindmarkeering met 1 */
+                endIndex = (endIndex+1) % fifoQueue.length;
 
-            currentSize.release();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+                currentSize.release();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 

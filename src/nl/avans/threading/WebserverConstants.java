@@ -70,5 +70,5 @@ public class WebserverConstants {
             MIMETYPE_TEXT_XML_UTF_8 = "text/xml; charset=utf-8";
 
     public final static int MAX_CONCURRENT_THREADS = 10;
-    public final static int LOGGER_QUEUE_MAX_SIZE = 1000;
+    public final static int LOGGER_QUEUE_MAX_SIZE = 10;
 }
