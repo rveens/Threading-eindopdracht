@@ -10,10 +10,11 @@ public class Main {
 
     public static void main(String[] args)
     {
+        SettingsIOHandler.loadSettings();
         try {
             /* create server instances */
-            ControlServer c = new ControlServer(8081);
-            Server s = new Server(8080);
+            ControlServer c = new ControlServer(Settings.controlPort);
+            Server s = new Server(Settings.webPort);
 
             /* start de logger */
             Logger logger = new Logger("/home/rick/Desktop/kaas12345"); // TODO logfile locatie ophalen uit settings-bestand

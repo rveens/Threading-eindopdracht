@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<settings>
+    <DB-settings>
+        <URL>jdbc:mysql://localhost:3306/</URL>
+        <tablename>webservAuth</tablename>
+        <username>root</username>
+        <password>fDb4tcwT38Dd</password>
+    </DB-settings>
+    <server-settings>
+        <web-port>8080</web-port>
+        <control-port>8081</control-port>
+        <web-root>htdocs</web-root>
+        <default-page>index.html</default-page>
+    </server-settings>
+</settings>
