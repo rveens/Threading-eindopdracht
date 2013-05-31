@@ -21,10 +21,12 @@ public class Server extends Thread {
 
     ServerSocket socketListen;  // Serversocket that wait (err, blocking call) for requests
     ExecutorService pool;       // Thread pool for limiting thread creation
+    Logger logger;
 
     public Server(Logger logger, int port) throws IOException
     {
         socketListen = new ServerSocket(port);
+        this.logger = logger;
     }
 
     @Override
