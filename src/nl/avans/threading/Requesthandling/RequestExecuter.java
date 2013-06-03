@@ -16,12 +16,12 @@ public class RequestExecuter
 
     private boolean executeGet()
     {
-
+        return false;
     }
 
     private boolean executePost()
     {
-
+        return false;
     }
 }
 

@@ -5,6 +5,7 @@ import nl.avans.threading.WebserverConstants;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URLDecoder;
 import java.util.Hashtable;
 
 /**
@@ -27,6 +28,7 @@ public class HTTPRequestParser {
     {
         bufferedReader = new BufferedReader(isr);
         headers = new Hashtable();
+        params = new Hashtable();
         httpVersion = new int[2];
         httpMethod = "";
         url = "";
@@ -41,7 +43,6 @@ public class HTTPRequestParser {
         String initialRequestLine;      // Bijvoorbeeld:  GET / HTTP/1.1
         String initialRequestLineWords[];
         String[] temp;
-        int i, idx; // idx: index of of the url
 
         /* Initial Request Line afhandelen */
         initialRequestLine = bufferedReader.readLine();
@@ -81,7 +82,8 @@ public class HTTPRequestParser {
                 initialRequestLineWords[0].equals(WebserverConstants.POST)) {
             // TODO parameters in de url ondersteunen
             httpMethod = initialRequestLineWords[0];
-            url = initialRequestLineWords[1];
+
+            parseParameters(initialRequestLineWords[1]);
             parseHeaders();
             if (headers == null)
                 throw new HTTPInvalidRequestException();
@@ -112,6 +114,33 @@ public class HTTPRequestParser {
                 headers.put(line.substring(0, index).toLowerCase(), line.substring(index + 1).trim());
             line = bufferedReader.readLine();
         }
+    }
+
+    private void parseParameters(String url)
+    {
+        int paramStartIndex;    // index van '?'
+        String tempParams[];    // temp array om alle parameters in op te slaan
+        String temp[];          // temp arrat om tijdens de lus een result op te slaan
+        int i;                  // index voor loopen door de for-lus
+
+        paramStartIndex = url.indexOf('?');
+
+        if (paramStartIndex < 0)
+            this.url = url;
+        else {
+            url = URLDecoder.decode(url.substring(0, paramStartIndex));
+            tempParams = url.substring(paramStartIndex + 1).split("&");
+
+            for (i = 0; i < tempParams.length; i++) {
+                temp = tempParams[i].split("=");
+                if (temp.length == 2) {
+                    params.put(URLDecoder.decode(temp[0]), URLDecoder.decode(temp[1]));
+                } else if (temp.length == 1 && tempParams[i].indexOf('=') == tempParams[i].length()-1) {
+                    params.put(URLDecoder.decode(temp[0]), "");
+                }
+            }
+        }
+        System.out.println(params);
     }
 
     public String getHeader(String key) {
