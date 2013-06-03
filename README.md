@@ -36,8 +36,8 @@ Het doel van de webserver is om webpagina's naar een browser sturen. De bedoelin
 Bovendien:
 - De pagina's met foutmeldingen (zoals 404) staan in een aparte map.
 - De webserver moet alle verzoeken loggen, met daarin:
-  - Het ip-adres van de aanvrager 
-  - De datum en tijd (yyyy-mm-dd HH:MM:SS) en tijdsduur (in msec) van het verzoek
+  - <del>Het ip-adres van de aanvrager 
+  - <del>De datum en tijd (yyyy-mm-dd HH:MM:SS) en tijdsduur (in msec) van het verzoek
   - De hele URL uit het request
 
 ####Controlserver
