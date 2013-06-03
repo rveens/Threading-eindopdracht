@@ -1,5 +1,6 @@
 package nl.avans.threading.Requesthandling;
 
+import nl.avans.threading.Logging.Logger;
 import nl.avans.threading.WebserverConstants;
 
 import java.io.DataOutputStream;
@@ -18,15 +19,18 @@ import java.util.Date;
 public class RequestHandler implements Runnable {
     private Socket sok;
     private HTTPRequestParser reqparser;
+    private Logger logger;
 
     public RequestHandler(Socket sok)
     {
         this.sok = sok;
+        this.logger = Logger.getInstance();
     }
 
     @Override
     public void run() {
         try {
+            long timeStart = System.currentTimeMillis(); //TO MEASURE RESPONSE TIME
             reqparser = new HTTPRequestParser(new InputStreamReader(sok.getInputStream()));
             try {
                 /* 1 - parsen van request */
@@ -41,6 +45,10 @@ public class RequestHandler implements Runnable {
                 e.printStackTrace();
                 sendResponse(400, reqparser.getHttpVersion());
             }
+
+            //LOGGING
+            long elapsedTimeMillis = System.currentTimeMillis()-timeStart;
+            logger.LogMessage(reqparser.getHttpMethod() + " " + reqparser.getUrl() + " Request took: " + elapsedTimeMillis + "ms" + " <" + sok.getInetAddress().getHostAddress() + ">");
 
             // Sluit de socket -> niet met http1.1
             sok.close();
@@ -67,7 +75,7 @@ public class RequestHandler implements Runnable {
         initialResponseLine += WebserverConstants.HttpReplies.get(statusCode);
         initialResponseLine += '\n';
 
-        headers += "Date: " + WebserverConstants.DATE_FORMAT.format(currentTime) + '\n';
+        headers += "Date: " + WebserverConstants.DATE_FORMAT_RESPONSE.format(currentTime) + '\n';
         headers += "Server: SuperWebserver/0.1 (" + System.getProperty("os.name") + ")" + '\n';
         headers += "Content-Type: text/html" + '\n';
 

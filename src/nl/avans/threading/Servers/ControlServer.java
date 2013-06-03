@@ -1,6 +1,7 @@
 package nl.avans.threading.Servers;
 
 import nl.avans.threading.Logging.Logger;
+import nl.avans.threading.Settings;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -14,13 +15,16 @@ import java.net.Socket;
  */
 public class ControlServer extends Server
 {
-    public ControlServer(Logger logger, int port) throws IOException
+    public ControlServer(int port) throws IOException
     {
-        super(logger, port);
+        super(port);
     }
 
     @Override
     public void run() {
+        /*log start*/
+        logger.LogMessage("ControlServer started listening on port: " + Settings.controlPort);
+
         while (true) {
             try {
                 /* Wait for a new socket */
@@ -29,6 +33,7 @@ public class ControlServer extends Server
                 // TODO request handler for ControlServer
 
                 /* Do the actual handling */
+
             } catch (IOException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }

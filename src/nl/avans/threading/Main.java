@@ -12,14 +12,11 @@ public class Main {
     {
         SettingsIOHandler.loadSettings();
         try {
-            Logger logger = new Logger(Settings.logLocation); // TODO logfile locatie ophalen uit settings-bestand
+            Logger logger = Logger.getInstance();
 
             /* create server instances */
-            ControlServer c = new ControlServer(logger, Settings.controlPort);
-            Server s = new Server(logger, Settings.webPort);
-
-            // TODO test weghalen
-            logger.LogMessage("Dit is een test");
+            ControlServer c = new ControlServer(Settings.controlPort);
+            Server s = new Server(Settings.webPort);
 
             /* start de logger */
             logger.start();
