@@ -12,7 +12,7 @@ public class Main {
     {
         SettingsIOHandler.loadSettings();
         try {
-            Logger logger = new Logger("/home/rick/Desktop/kaas12345"); // TODO logfile locatie ophalen uit settings-bestand
+            Logger logger = new Logger(Settings.logLocation); // TODO logfile locatie ophalen uit settings-bestand
 
             /* create server instances */
             ControlServer c = new ControlServer(logger, Settings.controlPort);
