@@ -10,7 +10,7 @@ Threading / Security & Hacking - Eindopdracht
 ======================
 
 ###Onderwerpen
-- De onderwerpen die in deze opdracht aan bod komen:
+De onderwerpen die in deze opdracht aan bod komen:
 - Threading
 - Gebruik van sockets
 - Lezen van bestanden en mappen
@@ -26,15 +26,15 @@ De webserver moet bestaan uit drie hoofd-threads:
 - Een logger
 
 ####Webserver
-Het doel van de webserver is om webpagina's naar een browser sturen. De bedoeling is dat je in je eigen 'webroot' een aantal html-pagina's met plaatjes zet, die door de server getoond moeten worden.
-De webserver moet multithreaded zijn: elk http-request van een browser moet in een nieuwe handler-thread worden afgehandeld. Hou je volledig aan het HTTP-protocol (1.0 of 1.1), zoals:
+Het doel van de webserver is om webpagina's naar een browser sturen. De bedoeling is dat je in je eigen 'webroot' een aantal html-pagina's met plaatjes zet, die door de server getoond moeten worden. De webserver moet multithreaded zijn: elk http-request van een browser moet in een nieuwe handler-thread worden afgehandeld. Je hoeft alleen GET en POST te implementeren. Andere verzoeken zoals PUT en HEAD kun je afdoen als "400". Werk netjes volgens HTTP-protocol (1.0 of 1.1), zoals:
 - Lees alle regels uit het request
 - Stuur altijd een correcte response-header, met onder andere:
   - De juiste meldingen (200, 403, 404, ...)
   - Het correcte mime-type
+  - De content-length
 
 Bovendien:
-- De pagina's met foutmeldingen staan in een aparte map.
+- De pagina's met foutmeldingen (zoals 404) staan in een aparte map.
 - De webserver moet alle verzoeken loggen, met daarin:
   - Het ip-adres van de aanvrager 
   - De datum en tijd (yyyy-mm-dd HH:MM:SS) en tijdsduur (in msec) van het verzoek
@@ -49,7 +49,7 @@ De controlserver draait op dezelfde machine, maar op een andere poort dan de web
   - de webroot van de webserver
   - de naam van de default-pagina (zoals index.html)
   - directory browsing in- en uitschakelen
-- De instellingen worden in een XML-bestand opgeslagen.
+- <del>De instellingen worden in een XML-bestand opgeslagen.
 - Het logbestand moet via een webinterface in de controlserver te bekijken zijn
 
 ####Beveiliging
@@ -61,8 +61,8 @@ Om in de controlserver te komen, moeten beheerders en helpdesk-medewerkers kunne
 - Er zijn twee security levels:
   - ondersteuners mogen instellingen zien en log files bekijken
   - beheerders mogen instellingen wijzigen, log files bekijken en gebruikersgegevens onderhouden
-- Gebruikersgegevens staan in een SQL-database (zoals MySQL)
-- Wachtwoorden worden gecodeerd opgeslagen
+- <del>Gebruikersgegevens staan in een SQL-database (zoals MySQL)
+- <del>Wachtwoorden worden gecodeerd opgeslagen
 
 #####Overige beveiligingseisen
 - Gebruikers mogen gegevens buiten de webroot niet kunnen benaderen
