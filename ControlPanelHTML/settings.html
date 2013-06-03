@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Control Panel Administration Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+<div id="wrap">
+    <div class="row-fluid">
+        <div class="span12">
+            <h1 class="text-center">ControlServer AdminPanel</h1>
+            <div class="row-fluid">
+                <div class="span3">
+                    <ul class="nav nav-list">
+                        <li><a href="logs.html">Logs</a></li>
+                        <li class="active"><a href="settings.html">Settings</a></li>
+                        <li><a href="login.html">Users</a></li>
+                    </ul>
+                </div>
+                <div class="span9">
+                    <h2>Settings</h2>
+                    <form class="form-horizontal" id="contact-form" action="http://localhost:8080" method="post">
+                        <div class="control-group">
+                            <label class="control-label" for="inputWebPort">Web port:</label>
+                            <div class="controls">
+                                <input type="number" id="inputWebPort" name="inputWebPort" placeholder="web port" />
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="inputControlPort">Control port:</label>
+                            <div class="controls">
+                                <input type="number" id="inputControlPort" name="inputControlPort" placeholder="control port" />
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="inputWebroot">Webroot:</label>
+                            <div class="controls">
+                                <input type="text" id="inputWebroot" name="inputWebroot" placeholder="webroot" />
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="inputDefaultPage">Default page:</label>
+                            <div class="controls">
+                                <input type="text" id="inputDefaultPage" name="inputDefaultPage" placeholder="default page" />
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <div class="controls">
+                                <label class="checkbox">
+                                    <input type="checkbox" value="">
+                                    Directory browsing
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                            <button type="reset" class="btn">Clear</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="footer">
+    <div class="container">
+        <p class="muted credit">Webserver 0.1 by: <a href="http://www.google.nl/">Pascal Slegtenhorst</a> and <a href="http://www.microsoft.com/">Rick Veens</a>.</p>
+    </div>
+</div>
+
+<!-- JAVASCRIPT DOWN THE PAGE FOR FASTER LOADING -->
+<script src="http://code.jquery.com/jquery.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery.validate.min.js"></script>
+<script src="js/messages_nl.js"></script>
+<script src="js/mainscript.js"></script>
+</body>
+</html>

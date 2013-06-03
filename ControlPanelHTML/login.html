@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Control Panel Login Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div id="wrap">
+        <div class="row">
+            <div class="span4 offset4" style="margin-top: 50px">
+                <div class="well">
+                    <legend>Sign in to ControlPanel</legend>
+                    <form method="POST" action="" accept-charset="UTF-8">
+                        <div class="alert alert-error" style="display: none">
+                            <a class="close" data-dismiss="alert" href="#">x</a>Incorrect Username or Password!
+                        </div>
+                        <div class="alert alert-error" style="display: none">
+                            <a class="close" data-dismiss="alert" href="#">x</a>Please fill in both Username and Password!
+                        </div>
+                        <input class="span3" placeholder="Username" type="text" name="username" required="true">
+                        <input class="span3" placeholder="Password" type="password" name="password" required="true">
+                        <label class="checkbox">
+                            <input type="checkbox" name="remember" value="1"> Remember Me
+                        </label>
+                        <button class="btn-info btn" type="submit">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="footer">
+        <div class="container">
+            <p class="muted credit">Webserver 0.1 by: <a href="http://www.google.nl/">Pascal Slegtenhorst</a> and <a href="http://www.microsoft.com/">Rick Veens</a>.</p>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT DOWN THE PAGE FOR FASTER LOADING -->
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+</body>
+</html>
