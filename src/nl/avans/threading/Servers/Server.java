@@ -2,6 +2,7 @@ package nl.avans.threading.Servers;
 
 import nl.avans.threading.Logging.Logger;
 import nl.avans.threading.Requesthandling.RequestHandler;
+import nl.avans.threading.Settings;
 import nl.avans.threading.WebserverConstants;
 
 import java.io.IOException;
@@ -23,21 +24,25 @@ public class Server extends Thread {
     ExecutorService pool;       // Thread pool for limiting thread creation
     Logger logger;
 
-    public Server(Logger logger, int port) throws IOException
+    public Server(int port) throws IOException
     {
         socketListen = new ServerSocket(port);
-        this.logger = logger;
+        this.logger = Logger.getInstance();
     }
 
     @Override
     public void run() {
         pool = Executors.newFixedThreadPool(WebserverConstants.MAX_CONCURRENT_THREADS);
 
+        /*log start*/
+        logger.LogMessage("Server started listening on port: " + Settings.webPort);
+
         while (true) {
             try {
                 Socket sok = null;
                 /* Wait for a request */
                 sok = socketListen.accept();
+
                 /* Execute the request handling on another thread */
                 RequestHandler handler = new RequestHandler(sok);
                 pool.execute(handler);

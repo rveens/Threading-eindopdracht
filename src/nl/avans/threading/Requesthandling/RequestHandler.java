@@ -1,10 +1,8 @@
 package nl.avans.threading.Requesthandling;
 
-import nl.avans.threading.Settings;
 import nl.avans.threading.WebserverConstants;
 
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
@@ -36,10 +34,6 @@ public class RequestHandler implements Runnable {
 
                 /* 2 - bestand ophalen of reageren op POST */
                 // TODO functie maken voor afhandelen get, post
-                if (reqparser.getHttpMethod().equals("GET"))
-                    executeGet(reqparser);
-                else if (reqparser.getHttpMethod().equals("POST"))
-                    ; // TODO implement POST handling
 
                 /* 3 - response terugsturen */
                 sendResponse(200, reqparser.getHttpVersion());
@@ -53,17 +47,6 @@ public class RequestHandler implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-    }
-
-    private int executeGet(HTTPRequestParser reqparser)
-    {
-        File f = new File(Settings.webRoot + reqparser.getUrl());
-        if (f.exists())
-            ;
-        else
-            return 404;
-
-        return 0;
     }
 
     private void sendResponse(int statusCode, int[] httpVersion)

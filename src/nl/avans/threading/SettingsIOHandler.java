@@ -4,6 +4,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 
+import nl.avans.threading.Logging.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
@@ -80,8 +81,53 @@ public class SettingsIOHandler {
     /**
      *  Store values from @param in settings.xml file
      */
-    public static void saveChanges(int webPort, int controlPort, String webRoot, String defaultPage)
+    public static void saveChanges(int webPort, int controlPort, String webRoot, String defaultPage, boolean dirBrowsing)
     {
-        //TODO prevent xml-injection by escaping characters like '<' and "'"
+        if (!(webPort > 79 && webPort < 10000))
+            return;
+        if (!(controlPort > 79 && controlPort < 10000))
+            return;
+        //TODO check if webroot and defaultpage is valid
+
+        try {
+            webRoot = encodeParam(webRoot);
+            defaultPage = encodeParam(defaultPage);
+
+            //Create DOM tree from file//
+            File xmlFile = new File("settings.xml");
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(xmlFile);
+            doc.getDocumentElement().normalize();
+
+            NodeList nodeList = doc.getElementsByTagName("server-settings");
+            Node node = nodeList.item(0);
+            Element element;
+            if (node.getNodeType() == Node.ELEMENT_NODE)
+            {
+                element = (Element) node;
+                element.getElementsByTagName("web-port").item(0).setTextContent("" + webPort);
+                element.getElementsByTagName("control-port").item(0).setTextContent("" + controlPort);
+                element.getElementsByTagName("web-root").item(0).setTextContent(webRoot);
+                element.getElementsByTagName("default-page").item(0).setTextContent(defaultPage);
+            }
+            System.out.println("Settings updated by control-panel");
+            if (dirBrowsing)
+                System.out.println("Dir browsing not implemented");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+    *   Encode parameter to prevent xml-injection
+    */
+    private static String encodeParam(String param) throws Exception {
+        //DONE prevent xml-injection by escaping characters like '<' and "'"
+        if (!(param == null)) {
+            if (param.contains("<'>"))
+                throw new Exception("Possible injection detected");
+        }
+        return "";
     }
 }

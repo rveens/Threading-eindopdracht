@@ -1,8 +1,10 @@
 package nl.avans.threading.Logging;
 
+import nl.avans.threading.Settings;
 import nl.avans.threading.WebserverConstants;
 
 import java.io.*;
+import java.util.Date;
 import java.util.concurrent.Semaphore;
 
 /**
@@ -14,6 +16,7 @@ import java.util.concurrent.Semaphore;
  */
 public class Logger extends Thread
 {
+    private static Logger _instance;
     private File logFile;                   // Bestand waar de regels naar weggeschreven worden
 
     private String[] fifoQueue;             // De queue, dit is een string-array. Dit is verplicht namens de opdracht.
@@ -21,7 +24,7 @@ public class Logger extends Thread
     private int endIndex;                   // Einde van de circular queue
     private int currentSize;
 
-    public Logger(String logFilePath)
+    private Logger(String logFilePath)
     {
         fifoQueue = new String[WebserverConstants.LOGGER_QUEUE_MAX_SIZE];
         currentSize = startIndex = endIndex = 0;
@@ -41,11 +44,22 @@ public class Logger extends Thread
         }
     }
 
+    public static Logger getInstance()
+    {
+        if (_instance == null)
+            _instance = new Logger(Settings.logLocation);
+        return _instance;
+    }
+
     /*
     * Logmessages toevoegen aan de queue
     */
     public void LogMessage(final String newMessage)
     {
+        final String currentTime = WebserverConstants.DATE_FORMAT_LOG.format(new Date()); //to add current datetime to log
+        final String logMessage = "[" + currentTime + "] " + newMessage;
+        System.out.println(logMessage);
+
         new Thread() {
             public void run()
             {
@@ -60,7 +74,7 @@ public class Logger extends Thread
                     }
 
                     /* zet de nieuwe message vooraan in de queue */
-                    fifoQueue[endIndex] = newMessage;
+                    fifoQueue[endIndex] = logMessage;
                     /* vergroot de eindmarkeering met 1 */
                     endIndex = (endIndex+1) % fifoQueue.length;
                     currentSize++;
