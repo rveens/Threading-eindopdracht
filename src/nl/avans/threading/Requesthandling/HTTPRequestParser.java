@@ -83,10 +83,14 @@ public class HTTPRequestParser {
             // TODO parameters in de url ondersteunen
             httpMethod = initialRequestLineWords[0];
 
-            parseParameters(initialRequestLineWords[1]);
             parseHeaders();
             if (headers == null)
                 throw new HTTPInvalidRequestException();
+            /* TEST: print body */
+            String line;
+            while ( (line = bufferedReader.readLine()) != null) {
+                System.out.println(line);
+            }
         } else {
             // Het eerste woord klopt niet, of de methode wordt niet niet ondersteund.
             throw new HTTPInvalidRequestException();
