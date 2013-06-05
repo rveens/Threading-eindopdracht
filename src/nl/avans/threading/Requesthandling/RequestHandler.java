@@ -1,8 +1,10 @@
 package nl.avans.threading.Requesthandling;
 
+import nl.avans.threading.Settings;
 import nl.avans.threading.WebserverConstants;
 
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
@@ -27,19 +29,46 @@ public class RequestHandler implements Runnable {
     @Override
     public void run() {
         try {
+            DataOutputStream out = null;
+
             reqparser = new HTTPRequestParser(new InputStreamReader(sok.getInputStream()));
             try {
                 /* 1 - parsen van request */
                 reqparser.validateRequest();
 
                 /* 2 - bestand ophalen of reageren op POST */
-                // TODO functie maken voor afhandelen get, post
+                if (reqparser.getHttpMethod().equals("GET")) {
+                    /* check if the file exists */
+                    File f = new File(Settings.webRoot + reqparser.getUrl());
+                    out = new DataOutputStream(sok.getOutputStream());
+                    if (f.exists()) {
+                        out.writeBytes(createInitialResponseLine(200, reqparser.getHttpVersion()));
+                        out.writeBytes(createResponsHeaders());
+                        // TODO write file to stream end add a newline
+                    } else {
+                        out.writeBytes(createInitialResponseLine(404, reqparser.getHttpVersion()));
+                        out.writeBytes(createResponsHeaders());
+                    }
 
-                /* 3 - response terugsturen */
-                sendResponse(200, reqparser.getHttpVersion());
+                    out.close();
+                } else if (reqparser.getHttpMethod().equals("POST")) {
+
+                } else {
+                    out = new DataOutputStream(sok.getOutputStream());
+                    out.writeBytes(createInitialResponseLine(404, reqparser.getHttpVersion()));
+                    out.writeBytes(createResponsHeaders());
+                    out.close();
+                }
+                    ; // TODO error terugsturen
             } catch (HTTPInvalidRequestException e) {
                 e.printStackTrace();
-                sendResponse(400, reqparser.getHttpVersion());
+
+                /* send bad request response */
+                if (out == null)
+                    out = new DataOutputStream(sok.getOutputStream());
+                out.writeBytes(createInitialResponseLine(400, new int[] { 1, 1}));
+                out.writeBytes(createResponsHeaders());
+                out.close();
             }
 
             // Sluit de socket -> niet met http1.1
@@ -49,13 +78,11 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private void sendResponse(int statusCode, int[] httpVersion)
+    private String createInitialResponseLine(int statusCode, int[] httpVersion)
     {
-        String initialResponseLine, headers, body;
-        Date currentTime;
+        String initialResponseLine;
 
-        initialResponseLine = headers = body = "";
-        currentTime = new Date();
+        initialResponseLine = "";
 
         initialResponseLine += "HTTP/";
         initialResponseLine += httpVersion[0];
@@ -67,22 +94,24 @@ public class RequestHandler implements Runnable {
         initialResponseLine += WebserverConstants.HttpReplies.get(statusCode);
         initialResponseLine += '\n';
 
-        headers += "Date: " + WebserverConstants.DATE_FORMAT.format(currentTime) + '\n';
+        return initialResponseLine;
+    }
+
+    // FIXME deze zijn altijd hetzelfde?
+    private String createResponsHeaders()
+    {
+        String headers;
+        Date currentTime;
+
+        headers = "";
+        currentTime = new Date();
+
+        headers += "Date: " + WebserverConstants.DATE_FORMAT_RESPONSE.format(currentTime) + '\n';
         headers += "Server: SuperWebserver/0.1 (" + System.getProperty("os.name") + ")" + '\n';
         headers += "Content-Type: text/html" + '\n';
 
         headers += "\r\n";
 
-        try {
-            DataOutputStream out = new DataOutputStream(sok.getOutputStream());
-            out.writeBytes(initialResponseLine);
-            out.writeBytes(headers);
-            // TODO opgevraagde bestand lezen bij een GET
-            out.writeBytes("appelflap");
-
-            out.close(); // NIET VERGETEN
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
+        return headers;
     }
 }
