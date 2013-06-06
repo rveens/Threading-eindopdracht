@@ -33,19 +33,21 @@ public class RequestHandler implements Runnable {
 
             reqparser = new HTTPRequestParser(new InputStreamReader(sok.getInputStream()));
             try {
-                /* 1 - parsen van request */
+                /* 1 - Parsen van request */
                 reqparser.validateRequest();
 
-                /* 2 - bestand ophalen of reageren op POST */
+                /* 2 - Bestand ophalen of reageren op POST */
                 if (reqparser.getHttpMethod().equals("GET")) {
                     /* check if the file exists */
                     File f = new File(Settings.webRoot + reqparser.getUrl());
                     out = new DataOutputStream(sok.getOutputStream());
                     if (f.exists()) {
+                        System.out.println("TEST: File: '" + f.getPath() + "' found");
                         out.writeBytes(createInitialResponseLine(200, reqparser.getHttpVersion()));
                         out.writeBytes(createResponsHeaders());
                         // TODO write file to stream end add a newline
                     } else {
+                        System.out.println("TEST: File: '" + f.getPath() + "' not found");
                         out.writeBytes(createInitialResponseLine(404, reqparser.getHttpVersion()));
                         out.writeBytes(createResponsHeaders());
                     }
