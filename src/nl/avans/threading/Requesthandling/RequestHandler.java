@@ -2,13 +2,11 @@ package nl.avans.threading.Requesthandling;
 
 import nl.avans.threading.Settings;
 import nl.avans.threading.WebserverConstants;
-import nl.avans.threading.Logging.Logger;
 
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import javax.activation.FileTypeMap;
+import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
 import java.util.Date;
 
 /**
@@ -21,18 +19,15 @@ import java.util.Date;
 public class RequestHandler implements Runnable {
     private Socket sok;
     private HTTPRequestParser reqparser;
-    private Logger logger;
 
     public RequestHandler(Socket sok)
     {
         this.sok = sok;
-        this.logger = Logger.getInstance();
     }
 
     @Override
     public void run() {
         try {
-            long timeStart = System.currentTimeMillis(); //TO MEASURE RESPONSE TIME
             DataOutputStream out = null;
 
             reqparser = new HTTPRequestParser(new InputStreamReader(sok.getInputStream()));
@@ -46,14 +41,22 @@ public class RequestHandler implements Runnable {
                     File f = new File(Settings.webRoot + reqparser.getUrl());
                     out = new DataOutputStream(sok.getOutputStream());
                     if (f.exists()) {
-                        System.out.println("TEST: File: '" + f.getPath() + "' found");
+                        System.out.println("TEST: File: '" + f.getAbsolutePath() + "' found");
                         out.writeBytes(createInitialResponseLine(200, reqparser.getHttpVersion()));
-                        out.writeBytes(createResponsHeaders());
+                        /* get content type of file */
+                        out.writeBytes(createResponsHeaders(Files.probeContentType(f.toPath())));
                         // TODO write file to stream end add a newline
+
+                        /* fileinputstream for reading bytes from the file */
+                        FileInputStream fis = new FileInputStream(f);
+                        int count;
+                        byte[] fileReadBuffer = new byte[WebserverConstants.FILE_READ_CHUNK_SIZE];
+                        while ((count = fis.read(fileReadBuffer)) > 0)
+                            out.write(fileReadBuffer, 0, count);
                     } else {
                         System.out.println("TEST: File: '" + f.getPath() + "' not found");
                         out.writeBytes(createInitialResponseLine(404, reqparser.getHttpVersion()));
-                        out.writeBytes(createResponsHeaders());
+                        out.writeBytes(createResponsHeaders("text/html"));
                     }
 
                     out.close();
@@ -62,7 +65,7 @@ public class RequestHandler implements Runnable {
                 } else {
                     out = new DataOutputStream(sok.getOutputStream());
                     out.writeBytes(createInitialResponseLine(404, reqparser.getHttpVersion()));
-                    out.writeBytes(createResponsHeaders());
+                    out.writeBytes(createResponsHeaders("text/html"));
                     out.close();
                 }
                     ; // TODO error terugsturen
@@ -73,16 +76,13 @@ public class RequestHandler implements Runnable {
                 if (out == null)
                     out = new DataOutputStream(sok.getOutputStream());
                 out.writeBytes(createInitialResponseLine(400, new int[] { 1, 1}));
-                out.writeBytes(createResponsHeaders());
+                out.writeBytes(createResponsHeaders("text/html"));
                 out.close();
             }
 
-            //LOGGING
-            long elapsedTimeMillis = System.currentTimeMillis()-timeStart;
-            logger.LogMessage(reqparser.getHttpMethod() + " " + reqparser.getUrl() + " Request took: " + elapsedTimeMillis + "ms" + " <" + sok.getInetAddress().getHostAddress() + ">");
-
-            // Sluit de socket -> niet met http1.1
-            sok.close();
+            // TODO Sluit de socket -> niet met http1.1
+            if (!reqparser.getHeader("connection").equals("keep-alive"))
+                sok.close();
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
@@ -108,7 +108,7 @@ public class RequestHandler implements Runnable {
     }
 
     // FIXME deze zijn altijd hetzelfde?
-    private String createResponsHeaders()
+    private String createResponsHeaders(String contentType)
     {
         String headers;
         Date currentTime;
@@ -118,7 +118,7 @@ public class RequestHandler implements Runnable {
 
         headers += "Date: " + WebserverConstants.DATE_FORMAT_RESPONSE.format(currentTime) + '\n';
         headers += "Server: SuperWebserver/0.1 (" + System.getProperty("os.name") + ")" + '\n';
-        headers += "Content-Type: text/html" + '\n';
+        headers += "Content-Type: " + contentType + '\n';
 
         headers += "\r\n";
 

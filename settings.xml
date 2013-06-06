@@ -9,7 +9,7 @@
     <server-settings>
         <web-port>8080</web-port>
         <control-port>8081</control-port>
-        <web-root>htdocs</web-root>
+        <web-root>/home/rick/Documents/webroot</web-root>
         <default-page>index.html</default-page>
         <log-location>log.txt</log-location>
     </server-settings>
