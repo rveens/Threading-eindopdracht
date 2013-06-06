@@ -150,6 +150,11 @@ public class HTTPRequestParser {
         System.out.println(params);
     }
 
+    private void parseContentbody()
+    {
+
+    }
+
     public String getHeader(String key) {
         if (headers != null)
             return (String) headers.get(key.toLowerCase());

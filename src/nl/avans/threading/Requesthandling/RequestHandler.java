@@ -2,6 +2,7 @@ package nl.avans.threading.Requesthandling;
 
 import nl.avans.threading.Settings;
 import nl.avans.threading.WebserverConstants;
+import nl.avans.threading.Logging.Logger;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -20,15 +21,18 @@ import java.util.Date;
 public class RequestHandler implements Runnable {
     private Socket sok;
     private HTTPRequestParser reqparser;
+    private Logger logger;
 
     public RequestHandler(Socket sok)
     {
         this.sok = sok;
+        this.logger = Logger.getInstance();
     }
 
     @Override
     public void run() {
         try {
+            long timeStart = System.currentTimeMillis(); //TO MEASURE RESPONSE TIME
             DataOutputStream out = null;
 
             reqparser = new HTTPRequestParser(new InputStreamReader(sok.getInputStream()));
@@ -72,6 +76,10 @@ public class RequestHandler implements Runnable {
                 out.writeBytes(createResponsHeaders());
                 out.close();
             }
+
+            //LOGGING
+            long elapsedTimeMillis = System.currentTimeMillis()-timeStart;
+            logger.LogMessage(reqparser.getHttpMethod() + " " + reqparser.getUrl() + " Request took: " + elapsedTimeMillis + "ms" + " <" + sok.getInetAddress().getHostAddress() + ">");
 
             // Sluit de socket -> niet met http1.1
             sok.close();
