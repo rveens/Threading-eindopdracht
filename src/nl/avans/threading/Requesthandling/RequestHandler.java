@@ -42,11 +42,11 @@ public class RequestHandler implements Runnable {
                     out = new DataOutputStream(sok.getOutputStream());
                     if (f.exists()) {
                         System.out.println("TEST: File: '" + f.getAbsolutePath() + "' found");
+                        // TODO determine content-length and add this to the header
                         out.writeBytes(createInitialResponseLine(200, reqparser.getHttpVersion()));
                         /* get content type of file */
-                        out.writeBytes(createResponsHeaders(Files.probeContentType(f.toPath())));
-                        // TODO write file to stream end add a newline
-
+                        out.writeBytes(createResponsHeaders(Files.probeContentType(f.toPath()), (int) f.length()));
+                        // TODO write file to stream
                         /* fileinputstream for reading bytes from the file */
                         FileInputStream fis = new FileInputStream(f);
                         int count;
@@ -56,7 +56,7 @@ public class RequestHandler implements Runnable {
                     } else {
                         System.out.println("TEST: File: '" + f.getPath() + "' not found");
                         out.writeBytes(createInitialResponseLine(404, reqparser.getHttpVersion()));
-                        out.writeBytes(createResponsHeaders("text/html"));
+                        out.writeBytes(createResponsHeaders("text/html", 0));
                     }
 
                     out.close();
@@ -65,7 +65,7 @@ public class RequestHandler implements Runnable {
                 } else {
                     out = new DataOutputStream(sok.getOutputStream());
                     out.writeBytes(createInitialResponseLine(404, reqparser.getHttpVersion()));
-                    out.writeBytes(createResponsHeaders("text/html"));
+                    out.writeBytes(createResponsHeaders("text/html", 0));
                     out.close();
                 }
                     ; // TODO error terugsturen
@@ -76,7 +76,7 @@ public class RequestHandler implements Runnable {
                 if (out == null)
                     out = new DataOutputStream(sok.getOutputStream());
                 out.writeBytes(createInitialResponseLine(400, new int[] { 1, 1}));
-                out.writeBytes(createResponsHeaders("text/html"));
+                out.writeBytes(createResponsHeaders("text/html", 0));
                 out.close();
             }
 
@@ -90,6 +90,7 @@ public class RequestHandler implements Runnable {
 
     private String createInitialResponseLine(int statusCode, int[] httpVersion)
     {
+        // TODO use stringbuilder
         String initialResponseLine;
 
         initialResponseLine = "";
@@ -108,8 +109,9 @@ public class RequestHandler implements Runnable {
     }
 
     // FIXME deze zijn altijd hetzelfde?
-    private String createResponsHeaders(String contentType)
+    private String createResponsHeaders(String contentType, int contentLength)
     {
+        // TODO use stringbuilder
         String headers;
         Date currentTime;
 
@@ -119,6 +121,7 @@ public class RequestHandler implements Runnable {
         headers += "Date: " + WebserverConstants.DATE_FORMAT_RESPONSE.format(currentTime) + '\n';
         headers += "Server: SuperWebserver/0.1 (" + System.getProperty("os.name") + ")" + '\n';
         headers += "Content-Type: " + contentType + '\n';
+        headers += "Content-Length: " + contentLength + '\n';
 
         headers += "\r\n";
 

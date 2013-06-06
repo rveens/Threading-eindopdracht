@@ -70,17 +70,6 @@ public class WebserverConstants {
             OPTIONS = "OPTIONS",
             DELETE = "DELETE";
 
-    public final static String
-            MIMETYPE_TEXT_HTML = "text/html",
-            MIMETYPE_TEXT_PLAIN = "text/plain",
-            MIMETYPE_TEXT_XML = "text/xml",
-            MIMETYPE_TEXT_HTML_8859_1 = "text/html; charset=iso-8859-1",
-            MIMETYPE_TEXT_PLAIN_8859_1 = "text/plain; charset=iso-8859-1",
-            MIMETYPE_TEXT_XML_8859_1 = "text/xml; charset=iso-8859-1",
-            MIMETYPE_TEXT_HTML_UTF_8 = "text/html; charset=utf-8",
-            MIMETYPE_TEXT_PLAIN_UTF_8 = "text/plain; charset=utf-8",
-            MIMETYPE_TEXT_XML_UTF_8 = "text/xml; charset=utf-8";
-
     public final static int MAX_CONCURRENT_THREADS = 10;
     public final static int LOGGER_QUEUE_MAX_SIZE = 10;
     public final static DateFormat DATE_FORMAT_RESPONSE = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH); // Mon, 23 May 2005 22:38:34 GMT
