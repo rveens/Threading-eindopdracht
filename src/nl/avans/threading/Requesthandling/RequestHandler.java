@@ -1,5 +1,6 @@
 package nl.avans.threading.Requesthandling;
 
+import nl.avans.threading.Logging.Logger;
 import nl.avans.threading.Settings;
 import nl.avans.threading.SettingsIOHandler;
 import nl.avans.threading.WebserverConstants;
@@ -22,10 +23,12 @@ import java.util.Hashtable;
 public class RequestHandler implements Runnable {
     private Socket sok;
     private HTTPRequestParser reqparser;
+    private Logger logger;
 
     public RequestHandler(Socket sok)
     {
         this.sok = sok;
+        logger = Logger.getInstance();
     }
 
     @Override
