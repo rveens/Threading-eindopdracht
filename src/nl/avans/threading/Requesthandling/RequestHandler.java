@@ -34,6 +34,7 @@ public class RequestHandler implements Runnable {
     @Override
     public void run() {
         try {
+            long timeStart = System.currentTimeMillis(); //TO MEASURE RESPONSE TIME
             DataOutputStream out = null;
 
             reqparser = new HTTPRequestParser(new InputStreamReader(sok.getInputStream()));
@@ -43,50 +44,13 @@ public class RequestHandler implements Runnable {
 
                 /* 2 - Bestand ophalen of reageren op POST */
                 if (reqparser.getHttpMethod().equals("GET")) {
-                    /* check if the file exists */
-                    File f = new File(Settings.webRoot + reqparser.getUrl());
-                    out = new DataOutputStream(sok.getOutputStream());
-                    if (f.exists()) {
-                        System.out.println("TEST: File: '" + f.getAbsolutePath() + "' found");
-                        // TODO determine content-length and add this to the header
-                        out.writeBytes(createInitialResponseLine(200, reqparser.getHttpVersion()));
-                        /* get content type of file */
-                        out.writeBytes(createResponsHeaders(Files.probeContentType(f.toPath()), (int) f.length()));
-                        // TODO write file to stream
-                        /* fileinputstream for reading bytes from the file */
-                        FileInputStream fis = new FileInputStream(f);
-                        int count;
-                        byte[] fileReadBuffer = new byte[WebserverConstants.FILE_READ_CHUNK_SIZE];
-                        while ((count = fis.read(fileReadBuffer)) > 0)
-                            out.write(fileReadBuffer, 0, count);
-                    } else {
-                        System.out.println("TEST: File: '" + f.getPath() + "' not found");
-                        out.writeBytes(createInitialResponseLine(404, reqparser.getHttpVersion()));
-                        out.writeBytes(createResponsHeaders("text/html", 0));
-                    }
-
-                    out.close();
+                    handleGETRequest();
                 } else if (reqparser.getHttpMethod().equals("POST")) {
-                    Hashtable<String, String> contentBody = reqparser.getContentBody();
-                    if (contentBody != null) {
-                        if (SettingsIOHandler.saveChanges(  Integer.parseInt(contentBody.get("inputWebPort")),
-                                                            Integer.parseInt(contentBody.get("inputControlPort")),
-                                                            contentBody.get("inputWebroot"),
-                                                            contentBody.get("inputDefaultPage"),
-                                                            false))
-                            logger.LogMessage("settings file updated by control-panel");
-                            //TODO SERVER SHOULD REBOOT
-                    } else {
-                        //THROW UP AN ERROR PAGE
-                    }
+                    handlePOSTRequest();
 
                 } else {
-                    out = new DataOutputStream(sok.getOutputStream());
-                    out.writeBytes(createInitialResponseLine(404, reqparser.getHttpVersion()));
-                    out.writeBytes(createResponsHeaders("text/html", 0));
-                    out.close();
+                    handleNOTSUPPORTEDRequest();
                 }
-                    ; // TODO error terugsturen
             } catch (HTTPInvalidRequestException e) {
                 e.printStackTrace();
 
@@ -98,9 +62,79 @@ public class RequestHandler implements Runnable {
                 out.close();
             }
 
+            //LOGGING
+            long elapsedTimeMillis = System.currentTimeMillis()-timeStart;
+            logger.LogMessage(reqparser.getHttpMethod() + " " + reqparser.getUrl() + " Request took: " + elapsedTimeMillis + "ms" + " <" + sok.getInetAddress().getHostAddress() + ">");
+
             // TODO Sluit de socket -> niet met http1.1
             if (!reqparser.getHeader("connection").equals("keep-alive"))
                 sok.close();
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+    private void handleGETRequest()
+    {
+        DataOutputStream out = null;
+
+        try {
+            /* check if the file exists */
+            File f = new File(Settings.webRoot + reqparser.getUrl());
+            out = new DataOutputStream(sok.getOutputStream());
+            if (f.exists()) {
+                System.out.println("TEST: File: '" + f.getAbsolutePath() + "' found");
+                // TODO determine content-length and add this to the header
+                out.writeBytes(createInitialResponseLine(200, reqparser.getHttpVersion()));
+                            /* get content type of file */
+                out.writeBytes(createResponsHeaders(Files.probeContentType(f.toPath()), (int) f.length()));
+                // TODO write file to stream
+                            /* fileinputstream for reading bytes from the file */
+                FileInputStream fis = new FileInputStream(f);
+                int count;
+                byte[] fileReadBuffer = new byte[WebserverConstants.FILE_READ_CHUNK_SIZE];
+                while ((count = fis.read(fileReadBuffer)) > 0)
+                    out.write(fileReadBuffer, 0, count);
+            } else {
+                System.out.println("TEST: File: '" + f.getPath() + "' not found");
+                out.writeBytes(createInitialResponseLine(404, reqparser.getHttpVersion()));
+                out.writeBytes(createResponsHeaders("text/html", 0));
+            }
+
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void handlePOSTRequest()
+    {
+        DataOutputStream out = null;
+
+        Hashtable<String, String> contentBody = reqparser.getContentBody();
+        if (contentBody != null) {
+            if (SettingsIOHandler.saveChanges(  Integer.parseInt(contentBody.get("inputWebPort")),
+                    Integer.parseInt(contentBody.get("inputControlPort")),
+                    contentBody.get("inputWebroot"),
+                    contentBody.get("inputDefaultPage"),
+                    false))
+                logger.LogMessage("settings file updated by control-panel");
+            //TODO SERVER SHOULD REBOOT
+        } else {
+            //THROW UP AN ERROR PAGE
+        }
+        //TODO ADD RESPONSE
+    }
+
+    private void handleNOTSUPPORTEDRequest()
+    {
+        DataOutputStream out = null;
+
+        try {
+            out = new DataOutputStream(sok.getOutputStream());
+            out.writeBytes(createInitialResponseLine(404, reqparser.getHttpVersion()));
+            out.writeBytes(createResponsHeaders("text/html", 0));
+            out.close();
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
