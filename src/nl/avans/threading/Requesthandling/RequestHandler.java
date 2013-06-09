@@ -25,13 +25,10 @@ public class RequestHandler implements Runnable {
     protected HTTPRequestParser reqparser;
     protected Logger logger;
 
-    protected String webRoot;
-
     public RequestHandler(Socket sok)
     {
         this.sok = sok;
         logger = Logger.getInstance();
-        webRoot = Settings.webRoot;
     }
 
     @Override
@@ -77,13 +74,41 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private void handleGETRequest()
+    protected void handleGETRequest()
+    {
+        if (reqparser.getUrl().equals("/")) {
+            sendResponse(Settings.webRoot + "/" + Settings.defaultPage);
+        } else {
+            sendResponse(Settings.webRoot + reqparser.getUrl());
+        }
+    }
+
+    protected void handlePOSTRequest()
+    {
+        handleNOTSUPPORTEDRequest();
+    }
+
+    private void handleNOTSUPPORTEDRequest()
+    {
+        DataOutputStream out = null;
+
+        try {
+            out = new DataOutputStream(sok.getOutputStream());
+            out.writeBytes(createInitialResponseLine(404, reqparser.getHttpVersion()));
+            out.writeBytes(createResponsHeaders("text/html", 0));
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+    protected void sendResponse(String filePath)
     {
         DataOutputStream out = null;
 
         try {
             /* check if the file exists */
-            File f = new File(webRoot + reqparser.getUrl());
+            File f = new File(filePath);
             out = new DataOutputStream(sok.getOutputStream());
             if (f.exists()) {
                 System.out.println("TEST: File: '" + f.getAbsolutePath() + "' found");
@@ -107,25 +132,6 @@ public class RequestHandler implements Runnable {
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    protected void handlePOSTRequest()
-    {
-        handleNOTSUPPORTEDRequest();
-    }
-
-    private void handleNOTSUPPORTEDRequest()
-    {
-        DataOutputStream out = null;
-
-        try {
-            out = new DataOutputStream(sok.getOutputStream());
-            out.writeBytes(createInitialResponseLine(404, reqparser.getHttpVersion()));
-            out.writeBytes(createResponsHeaders("text/html", 0));
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
     }
 

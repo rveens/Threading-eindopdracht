@@ -18,7 +18,16 @@ public class ControlServerRequestHandler extends RequestHandler {
 
     public ControlServerRequestHandler(Socket sok) {
         super(sok);
-        webRoot = Settings.controlWebRoot;
+    }
+
+    @Override
+    protected void handleGETRequest()
+    {
+        if (reqparser.getUrl().equals("/")) {
+            sendResponse(Settings.controlWebRoot + "/" + Settings.defaultControlPage);
+        } else {
+            sendResponse(Settings.controlWebRoot + reqparser.getUrl());
+        }
     }
 
     @Override
