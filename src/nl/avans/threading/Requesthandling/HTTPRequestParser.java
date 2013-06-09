@@ -88,6 +88,8 @@ public class HTTPRequestParser {
             if (headers == null)
                 throw new HTTPInvalidRequestException();
 
+            this.url = initialRequestLineWords[1];
+
             /* TEST: print body */
             if (headers.get("content-length") != null) {
                 char[] buffer = new char[Integer.parseInt((String)headers.get("content-length"))];
@@ -107,7 +109,7 @@ public class HTTPRequestParser {
         /* http 1.1 vereist een host header */
         if (httpVersion[0] == 1 && httpVersion[1] >= 1 && getHeader("Host") == null)
             throw new HTTPInvalidRequestException();
-        bufferedReader.close();
+        //bufferedReader.close();
     }
 
     /* Read through the lines of the header and put them in a hashtable */
