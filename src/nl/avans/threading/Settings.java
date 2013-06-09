@@ -17,6 +17,7 @@ public class Settings {
     public static int webPort = 0;
     public static int controlPort = 0;
     public static String webRoot = "";
+    public static String controlWebRoot = "";
     public static String defaultPage = "";
     public static String defaultControlPage = "";
     public static String logLocation = "log.txt";

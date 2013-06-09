@@ -21,14 +21,17 @@ import java.util.Hashtable;
  * To change this template use File | Settings | File Templates.
  */
 public class RequestHandler implements Runnable {
-    private Socket sok;
-    private HTTPRequestParser reqparser;
-    private Logger logger;
+    protected Socket sok;
+    protected HTTPRequestParser reqparser;
+    protected Logger logger;
+
+    protected String webRoot;
 
     public RequestHandler(Socket sok)
     {
         this.sok = sok;
         logger = Logger.getInstance();
+        webRoot = Settings.webRoot;
     }
 
     @Override
@@ -80,7 +83,7 @@ public class RequestHandler implements Runnable {
 
         try {
             /* check if the file exists */
-            File f = new File(Settings.webRoot + reqparser.getUrl());
+            File f = new File(webRoot + reqparser.getUrl());
             out = new DataOutputStream(sok.getOutputStream());
             if (f.exists()) {
                 System.out.println("TEST: File: '" + f.getAbsolutePath() + "' found");
@@ -107,23 +110,9 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private void handlePOSTRequest()
+    protected void handlePOSTRequest()
     {
-        DataOutputStream out = null;
-
-        Hashtable<String, String> contentBody = reqparser.getContentBody();
-        if (contentBody != null) {
-            if (SettingsIOHandler.saveChanges(  Integer.parseInt(contentBody.get("inputWebPort")),
-                    Integer.parseInt(contentBody.get("inputControlPort")),
-                    contentBody.get("inputWebroot"),
-                    contentBody.get("inputDefaultPage"),
-                    false))
-                logger.LogMessage("settings file updated by control-panel");
-            //TODO SERVER SHOULD REBOOT
-        } else {
-            //THROW UP AN ERROR PAGE
-        }
-        //TODO ADD RESPONSE
+        handleNOTSUPPORTEDRequest();
     }
 
     private void handleNOTSUPPORTEDRequest()

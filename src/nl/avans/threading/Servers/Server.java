@@ -20,9 +20,9 @@ import java.util.concurrent.Executors;
  */
 public class Server extends Thread {
 
-    ServerSocket socketListen;  // Serversocket that wait (err, blocking call) for requests
-    ExecutorService pool;       // Thread pool for limiting thread creation
-    Logger logger;
+    protected ServerSocket socketListen;  // Serversocket that wait (err, blocking call) for requests
+    protected ExecutorService pool;       // Thread pool for limiting thread creation
+    protected Logger logger;
 
     public Server(int port) throws IOException
     {

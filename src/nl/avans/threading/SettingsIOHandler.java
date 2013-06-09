@@ -35,6 +35,7 @@ public class SettingsIOHandler {
             Settings.webPort = Integer.parseInt(properties.getProperty("web-port", "8080"));
             Settings.controlPort = Integer.parseInt(properties.getProperty("control-port", "8081"));
             Settings.webRoot = properties.getProperty("web-root", "htdocs");
+            Settings.controlWebRoot = properties.getProperty("control-web-root", "htdocs");
             Settings.defaultPage = properties.getProperty("default-page", "index.html");
             Settings.defaultControlPage = properties.getProperty("default-control-page", "login.html");
             Settings.logLocation = properties.getProperty("log-location", "log.txt");
