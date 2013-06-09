@@ -23,6 +23,7 @@ public class HTTPRequestParser {
     private String url;
     private Hashtable params;
     private Hashtable headers;
+    private Hashtable<String, String> contentBody;
 
     public HTTPRequestParser(InputStreamReader isr)
     {
@@ -91,6 +92,11 @@ public class HTTPRequestParser {
             if (headers.get("content-length") != null) {
                 char[] buffer = new char[Integer.parseInt((String)headers.get("content-length"))];
                 bufferedReader.read(buffer, 0, buffer.length);
+                try {
+                    parseContentbody(new String(buffer));
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
                 System.out.println(buffer);
             }
         } else {
@@ -150,9 +156,20 @@ public class HTTPRequestParser {
         System.out.println(params);
     }
 
-    private void parseContentbody()
+    private void parseContentbody(String bodyContentAsText) throws Exception
     {
-
+        if (bodyContentAsText != null)
+        {
+            String[] params = bodyContentAsText.split("&");
+            contentBody = new Hashtable<String, String>(params.length);
+            for (String param : params)
+            {
+                String[] paramPair = param.split("=");
+                if (paramPair.length != 2)
+                    throw new Exception("Contentbody is not well formed");
+                contentBody.put(paramPair[0], paramPair[1]);
+            }
+        }
     }
 
     public String getHeader(String key) {
@@ -172,5 +189,9 @@ public class HTTPRequestParser {
 
     public String getUrl() {
         return url;
+    }
+
+    public Hashtable<String, String> getContentBody() {
+        return contentBody;
     }
 }

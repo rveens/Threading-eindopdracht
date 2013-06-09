@@ -8,15 +8,17 @@ package nl.avans.threading;
  */
 public class Settings {
     //DB-settings//
-    public static String dbUrl = "jdbc:mysql://localhost:3306/";
-    public static String dbName = "webservAuth";
-    public static String dbUsername = "root";
-    public static String dbPassword = "fDb4tcwT38Dd";
+    public static String dbUrl = "";
+    public static String dbName = "";
+    public static String dbUsername = "";
+    public static String dbPassword = "";
 
     //Server-settings//
-    public static int webPort = 80;
-    public static int controlPort = 81;
+    public static int webPort = 0;
+    public static int controlPort = 0;
     public static String webRoot = "";
     public static String defaultPage = "";
+    public static String defaultControlPage = "";
     public static String logLocation = "log.txt";
+    public static String SettingsFileLocation = "settings.xml";
 }

@@ -1,16 +1,14 @@
-<?xml version="1.0"?>
-<settings>
-    <DB-settings>
-        <URL>jdbc:mysql://localhost:3306/</URL>
-        <database>webservAuth</database>
-        <username>root</username>
-        <password>fDb4tcwT38Dd</password>
-    </DB-settings>
-    <server-settings>
-        <web-port>8080</web-port>
-        <control-port>8081</control-port>
-        <web-root>htdocs</web-root>
-        <default-page>index.html</default-page>
-        <log-location>log.txt</log-location>
-    </server-settings>
-</settings>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<entry key="db-username">root</entry>
+<entry key="control-port">81</entry>
+<entry key="web-root">webroot</entry>
+<entry key="log-location">log.txt</entry>
+<entry key="db-name">webservAuth</entry>
+<entry key="db-url">jdbc:mysql://localhost:3306/</entry>
+<entry key="db-password">fDb4tcwT38Dd</entry>
+<entry key="default-control-page">login.html</entry>
+<entry key="web-port">8080</entry>
+<entry key="default-page">index.html</entry>
+</properties>

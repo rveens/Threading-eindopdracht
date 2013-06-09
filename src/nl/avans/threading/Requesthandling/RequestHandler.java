@@ -1,6 +1,7 @@
 package nl.avans.threading.Requesthandling;
 
 import nl.avans.threading.Settings;
+import nl.avans.threading.SettingsIOHandler;
 import nl.avans.threading.WebserverConstants;
 import nl.avans.threading.Logging.Logger;
 
@@ -10,6 +11,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Hashtable;
 
 /**
  * Created with IntelliJ IDEA.
@@ -58,6 +61,18 @@ public class RequestHandler implements Runnable {
 
                     out.close();
                 } else if (reqparser.getHttpMethod().equals("POST")) {
+                    Hashtable<String, String> contentBody = reqparser.getContentBody();
+                    if (contentBody != null) {
+                        if (SettingsIOHandler.saveChanges(  Integer.parseInt(contentBody.get("inputWebPort")),
+                                                            Integer.parseInt(contentBody.get("inputControlPort")),
+                                                            contentBody.get("inputWebroot"),
+                                                            contentBody.get("inputDefaultPage"),
+                                                            false))
+                            logger.LogMessage("settings file updated by control-panel");
+                            //TODO SERVER SHOULD REBOOT
+                    } else {
+                        //THROW UP AN ERROR PAGE
+                    }
 
                 } else {
                     out = new DataOutputStream(sok.getOutputStream());
