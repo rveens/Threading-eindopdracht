@@ -129,6 +129,7 @@ public class RequestHandler implements Runnable {
 
     protected void sendResponse(int responseCode, String cause)
     {
+        final String ERRORPAGE_LOCATION = "./ErrorPages/404.html";
         DataOutputStream out = null;
         try {
             logger.LogMessage("ERROR: " + responseCode + " - " + cause);
@@ -136,7 +137,6 @@ public class RequestHandler implements Runnable {
                 throw new Exception("responseCode not supported");
 
             //ERROR PAGE LOCATION
-            final String ERRORPAGE_LOCATION = "C:/Users/Pascal/Desktop/ErrorPages/404.html";
             out = new DataOutputStream(sok.getOutputStream());
 
             // create file to read error page content
