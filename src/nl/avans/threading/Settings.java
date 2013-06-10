@@ -22,4 +22,5 @@ public class Settings {
     public static String defaultControlPage = "";
     public static String logLocation = "log.txt";
     public static String SettingsFileLocation = "settings.xml";
+    public static boolean directoryBrowsing = false;
 }

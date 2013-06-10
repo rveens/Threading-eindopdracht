@@ -21,11 +21,11 @@ OWASP top 10 en beveiliging
 - Gebruikersgegevens staan in een SQL database
 - Wachtwoorden worden gecodeerd opgeslagen
 - Gebruikers mogen gegevens buiten de webroot niet kunnen benaderen
-- OWASP top 10 worden odnervangen
+- OWASP top 10 worden ondervangen
 
 WebServer
 - HTTPRequestParser
-	- httpinvalidrequestexception wordt soms opgegooid
+	- httpinvalidrequestexception wordt soms opgegooid vanwege null
 	    - Heeft dit temaken met de flush methode die we misschien moeten aanroepen?
 	- Niet via de browser invalid requests testen
 	- Lees alle regels uit de quest
@@ -35,8 +35,8 @@ WebServer
 	- Juiste http status codes
 x Https (met certificaat?, encrypted)
 - Directory browsing ondersteunen
-- Pagina's met foutmeldingen (404, forbidden etc)
-	- deze in een aparte map
+x Pagina's met foutmeldingen (404, forbidden etc)
+	x deze in een aparte map
 - Na een tijdje krijgt de webserver allemaal 'null' regels binnen. Exceptions worden opgegooid
 - Eventueel HTTPS inbouwen in de webserver behalve bij het control panel
 
