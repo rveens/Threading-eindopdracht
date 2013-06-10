@@ -14,6 +14,7 @@ Controlserver
 - Directory browsing ondersteunen
 
 OWASP top 10 en beveiliging
+- OWASP java library
 - Controlserver-systeem werkt met POST over HTTPS
 - Ondersteuners (super-users) mogen instellingen zien en log files bekijken
 - Beheerders (admin) mogen instellingen wijzigen, log files bekijken en gebruikersgegevens onderhouden
@@ -25,6 +26,7 @@ OWASP top 10 en beveiliging
 WebServer
 - HTTPRequestParser
 	- httpinvalidrequestexception wordt soms opgegooid
+	    - Heeft dit temaken met de flush methode die we misschien moeten aanroepen?
 	- Niet via de browser invalid requests testen
 	- Lees alle regels uit de quest
 - Stuurt correcte responde header
@@ -36,6 +38,7 @@ WebServer
 - Pagina's met foutmeldingen (404, forbidden etc)
 	- deze in een aparte map
 - Na een tijdje krijgt de webserver allemaal 'null' regels binnen. Exceptions worden opgegooid
+- Eventueel HTTPS inbouwen in de webserver behalve bij het control panel
 
 Logger
 - Hele URL

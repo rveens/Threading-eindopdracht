@@ -26,8 +26,13 @@ public class Server extends Thread {
 
     public Server(int port) throws IOException
     {
-        socketListen = new ServerSocket(port);
+        socketListen = createServerSocket(port);
         this.logger = Logger.getInstance();
+    }
+
+    protected ServerSocket createServerSocket(int port) throws IOException
+    {
+        return new ServerSocket(port);
     }
 
     @Override
