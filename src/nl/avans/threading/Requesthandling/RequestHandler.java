@@ -123,7 +123,7 @@ public class RequestHandler implements Runnable {
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
-            sendInternalErrorResponse();
+            sendInternalErrorResponse(e.getMessage());
         }
     }
 
@@ -158,13 +158,13 @@ public class RequestHandler implements Runnable {
 
             out.close();
         } catch (Exception e) {
-            e.printStackTrace();
-            sendInternalErrorResponse();
+            sendInternalErrorResponse(e.getMessage());
         }
     }
 
-    private void sendInternalErrorResponse()
+    private void sendInternalErrorResponse(String cause)
     {
+        logger.LogMessage("ERROR: " + "500 - " + cause);
         DataOutputStream out = null;
         try {
             out = new DataOutputStream(sok.getOutputStream());
