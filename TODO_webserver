@@ -1,0 +1,54 @@
+Controlserver
+- Inloggen (met cookies?)
+	- redirect (of vanuit de server of client?) na inloggen naar settings scherm
+- Settings scherm niet toegankelijk als niet ingelogd
+- Huidige settings inladen
+- Server restarten na een post (en hoe?)
+	- Exception opgooien
+- Server geeft nog geen response terug na een post
+	- Hoe weet je dat je naar een andere pagina moet gaan?
+- webroot pad krijgt percent tekens in de string
+- Log file moet ingeladen worden in het settings paneel
+- Meerdere users moeten beheerd kunnen worden
+	- Admin en superuser
+- Directory browsing ondersteunen
+
+OWASP top 10 en beveiliging
+- Controlserver-systeem werkt met POST over HTTPS
+- Ondersteuners (super-users) mogen instellingen zien en log files bekijken
+- Beheerders (admin) mogen instellingen wijzigen, log files bekijken en gebruikersgegevens onderhouden
+- Gebruikersgegevens staan in een SQL database
+- Wachtwoorden worden gecodeerd opgeslagen
+- Gebruikers mogen gegevens buiten de webroot niet kunnen benaderen
+- OWASP top 10 worden odnervangen
+
+WebServer
+- HTTPRequestParser
+	- httpinvalidrequestexception wordt soms opgegooid
+	- Niet via de browser invalid requests testen
+	- Lees alle regels uit de quest
+- Stuurt correcte responde header
+	- Stuurt correcte mime type
+	- Stuurt correcte content-length
+	- Juiste http status codes
+- Https (met certificaat?, encrypted)
+- Directory browsing ondersteunen
+- Pagina's met foutmeldingen (404, forbidden etc)
+	- deze in een aparte map
+- Na een tijdje krijgt de webserver allemaal 'null' regels binnen. Exceptions worden opgegooid
+
+Logger
+- Hele URL
+- IP adress van de aanvrager
+- Datum en tijd + tijdsduur
+- Logger testen op multithreaded 10+ threads
+
+Testplan
+- Per bedreiging uit de OWASP top 10:
+	- Wat het gevaar zou kunnen zijn in de server
+	- Wat je er daartegen gedaan hebt
+	- Hoe je dat getest hebt
+- Maak een keurig rapport en breng dit mee naar de eindbeoordeling
+
+Verder nog!:
+- Opdracht controlleren of we alles hebben
