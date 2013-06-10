@@ -30,8 +30,8 @@ Het doel van de webserver is om webpagina's naar een browser sturen. De bedoelin
 - Lees alle regels uit het request
 - Stuur altijd een correcte response-header, met onder andere:
   - De juiste meldingen (200, 403, 404, ...)
-  - Het correcte mime-type
-  - De content-length
+  - <del>Het correcte mime-type
+  - <del>De content-length
 
 Bovendien:
 - De pagina's met foutmeldingen (zoals 404) staan in een aparte map.
@@ -43,11 +43,11 @@ Bovendien:
 ####Controlserver
 De controlserver draait op dezelfde machine, maar op een andere poort dan de webserver. De controlserver is een bijzonder soort webserver om de instellingen van je programma te kunnen wijzigen.
 
-- De control-server werkt met een web-interface (formulier).
+- <del>De control-server werkt met een web-interface (formulier).
 - In de control-server kun je de volgende instellingen zien en wijzigen:
   - listen-poorten van beide servers, met onmiddellijke ingang te wijzigen
-  - de webroot van de webserver
-  - de naam van de default-pagina (zoals index.html)
+  - <del>de webroot van de webserver
+  - <del>de naam van de default-pagina (zoals index.html)
   - directory browsing in- en uitschakelen
 - <del>De instellingen worden in een XML-bestand opgeslagen.
 - Het logbestand moet via een webinterface in de controlserver te bekijken zijn
