@@ -33,7 +33,7 @@ WebServer
 	- Stuurt correcte mime type
 	- Stuurt correcte content-length
 	- Juiste http status codes
-- Https (met certificaat?, encrypted)
+x Https (met certificaat?, encrypted)
 - Directory browsing ondersteunen
 - Pagina's met foutmeldingen (404, forbidden etc)
 	- deze in een aparte map
