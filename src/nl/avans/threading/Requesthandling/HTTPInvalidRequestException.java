@@ -9,5 +9,16 @@ package nl.avans.threading.Requesthandling;
  */
 public class HTTPInvalidRequestException extends Exception
 {
+    private int responseCode;
 
+    public HTTPInvalidRequestException(int responseCode, String message)
+    {
+        super(message);
+        this.responseCode = responseCode;
+    }
+
+    public int getResponseCode()
+    {
+        return responseCode;
+    }
 }

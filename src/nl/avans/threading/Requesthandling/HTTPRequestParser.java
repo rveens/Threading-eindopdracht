@@ -51,18 +51,18 @@ public class HTTPRequestParser {
         /* Controleer de Initial Request Line op fouten */
         if (initialRequestLine == null || initialRequestLine.length() == 0) {
             // Waarschijnlijk een connectie fout
-            throw new HTTPInvalidRequestException();
+            throw new HTTPInvalidRequestException(400, "Initial request-line may not be null");
         }
         if (Character.isWhitespace(initialRequestLine.charAt(0))) {
             // Eerste char mag geen whitespace zijn
-            throw new HTTPInvalidRequestException();
+            throw new HTTPInvalidRequestException(400, "Initial request-line first character cannot be ' '");
         }
 
         /* split de Initial Request Line op in woorden */
         initialRequestLineWords = initialRequestLine.split("\\s"); // Deel op in woorden
         if (initialRequestLineWords.length != 3) {
             // Als de Initial Request Line niet uit drie woorden bestaat dan is het een bad request.
-            throw new HTTPInvalidRequestException();
+            throw new HTTPInvalidRequestException(400, "Initial request-line not well-formed");
         }
         if (initialRequestLineWords[2].indexOf("HTTP/") == 0 &&
                 initialRequestLineWords[2].indexOf('.') > 5) {
@@ -72,11 +72,11 @@ public class HTTPRequestParser {
                 httpVersion[0] = Integer.parseInt(temp[0]);
                 httpVersion[1] = Integer.parseInt(temp[1]);
             } catch(NumberFormatException nfe) {
-                throw new HTTPInvalidRequestException();
+                throw new HTTPInvalidRequestException(400, "undefined");
             }
         } else {
             // Derde woord is niet correct
-            throw new HTTPInvalidRequestException();
+            throw new HTTPInvalidRequestException(400, "undefined");
         }
 
         if (initialRequestLineWords[0].equals(WebserverConstants.GET) ||
@@ -86,7 +86,7 @@ public class HTTPRequestParser {
 
             parseHeaders();
             if (headers == null)
-                throw new HTTPInvalidRequestException();
+                throw new HTTPInvalidRequestException(400, "Headers could not be processed");
 
             this.url = initialRequestLineWords[1];
 
@@ -103,12 +103,12 @@ public class HTTPRequestParser {
             }
         } else {
             // Het eerste woord klopt niet, of de methode wordt niet niet ondersteund.
-            throw new HTTPInvalidRequestException();
+            throw new HTTPInvalidRequestException(400, "Only GET and POST requests are supported");
         }
 
         /* http 1.1 vereist een host header */
         if (httpVersion[0] == 1 && httpVersion[1] >= 1 && getHeader("Host") == null)
-            throw new HTTPInvalidRequestException();
+            throw new HTTPInvalidRequestException(400, "Header 'Host' must be provided");
         //bufferedReader.close();
     }
 

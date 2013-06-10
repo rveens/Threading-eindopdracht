@@ -47,19 +47,12 @@ public class RequestHandler implements Runnable {
                     handleGETRequest();
                 } else if (reqparser.getHttpMethod().equals("POST")) {
                     handlePOSTRequest();
-
                 } else {
-                    handleNOTSUPPORTEDRequest();
+                    throw new HTTPInvalidRequestException(405, "method: '" + reqparser.getHttpMethod() + "' not allowed");
                 }
             } catch (HTTPInvalidRequestException e) {
                 e.printStackTrace();
-
-                /* send bad request response */
-                if (out == null)
-                    out = new DataOutputStream(sok.getOutputStream());
-                out.writeBytes(createInitialResponseLine(400, new int[] { 1, 1}));
-                out.writeBytes(createResponsHeaders("text/html", 0));
-                out.close();
+                sendResponse(e.getResponseCode(), e.getMessage());
             }
 
             //LOGGING
@@ -107,28 +100,76 @@ public class RequestHandler implements Runnable {
         DataOutputStream out = null;
 
         try {
-            /* check if the file exists */
-            File f = new File(filePath);
             out = new DataOutputStream(sok.getOutputStream());
-            if (f.exists()) {
-                System.out.println("TEST: File: '" + f.getAbsolutePath() + "' found");
-                // TODO determine content-length and add this to the header
-                out.writeBytes(createInitialResponseLine(200, reqparser.getHttpVersion()));
-                            /* get content type of file */
-                out.writeBytes(createResponsHeaders(Files.probeContentType(f.toPath()), (int) f.length()));
-                // TODO write file to stream
-                            /* fileinputstream for reading bytes from the file */
-                FileInputStream fis = new FileInputStream(f);
-                int count;
-                byte[] fileReadBuffer = new byte[WebserverConstants.FILE_READ_CHUNK_SIZE];
-                while ((count = fis.read(fileReadBuffer)) > 0)
-                    out.write(fileReadBuffer, 0, count);
-            } else {
-                System.out.println("TEST: File: '" + f.getPath() + "' not found");
-                out.writeBytes(createInitialResponseLine(404, reqparser.getHttpVersion()));
-                out.writeBytes(createResponsHeaders("text/html", 0));
+            // create file to read error page content
+            File f = new File(filePath);
+            if (!f.exists()) {
+                sendResponse(404, "Page not found");
+                return;
             }
+            // send initial line of header
+            out.writeBytes(createInitialResponseLine(200, reqparser.getHttpVersion()));
+            // send headers (also get file content-type and length)
+            out.writeBytes(createResponsHeaders(Files.probeContentType(f.toPath()), (int) f.length()));
 
+            // use fileInputStream for reading bytes from the file
+            FileInputStream fis = new FileInputStream(f);
+            int count;
+            byte[] fileReadBuffer = new byte[WebserverConstants.FILE_READ_CHUNK_SIZE];
+            // send binaryData
+            while ((count = fis.read(fileReadBuffer)) > 0)
+                out.write(fileReadBuffer, 0, count);
+
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            sendInternalErrorResponse();
+        }
+    }
+
+    protected void sendResponse(int responseCode, String cause)
+    {
+        DataOutputStream out = null;
+        try {
+            logger.LogMessage("ERROR: " + responseCode + " - " + cause);
+            if (!(responseCode == 400 || responseCode == 401 || responseCode == 404))
+                throw new Exception("responseCode not supported");
+
+            //ERROR PAGE LOCATION
+            final String ERRORPAGE_LOCATION = "C:/Users/Pascal/Desktop/ErrorPages/404.html";
+            out = new DataOutputStream(sok.getOutputStream());
+
+            // create file to read error page content
+            File f = new File(ERRORPAGE_LOCATION);
+            if (!f.exists())
+                throw new Exception("Path to error page is not valid");
+            // send initial line of header
+            out.writeBytes(createInitialResponseLine(200, reqparser.getHttpVersion()));
+            // send headers (also get file content-type and length)
+            out.writeBytes(createResponsHeaders(Files.probeContentType(f.toPath()), (int) f.length()));
+
+            // use fileInputStream for reading bytes from the file
+            FileInputStream fis = new FileInputStream(f);
+            int count;
+            byte[] fileReadBuffer = new byte[WebserverConstants.FILE_READ_CHUNK_SIZE];
+            // send binaryData
+            while ((count = fis.read(fileReadBuffer)) > 0)
+                out.write(fileReadBuffer, 0, count);
+
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            sendInternalErrorResponse();
+        }
+    }
+
+    private void sendInternalErrorResponse()
+    {
+        DataOutputStream out = null;
+        try {
+            out = new DataOutputStream(sok.getOutputStream());
+            out.writeBytes(createInitialResponseLine(500, reqparser.getHttpVersion()));
+            out.writeBytes(createResponsHeaders("text/html", 0));
             out.close();
         } catch (IOException e) {
             e.printStackTrace();

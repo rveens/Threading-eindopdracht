@@ -1,6 +1,5 @@
 package nl.avans.threading.Requesthandling;
 
-import nl.avans.threading.Logging.Logger;
 import nl.avans.threading.Settings;
 import nl.avans.threading.SettingsIOHandler;
 
