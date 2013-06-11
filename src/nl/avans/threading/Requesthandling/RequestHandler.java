@@ -95,18 +95,24 @@ public class RequestHandler implements Runnable {
         }
     }
 
+    /* send page response */
     protected void sendResponse(String filePath)
     {
         DataOutputStream out = null;
 
         try {
-            out = new DataOutputStream(sok.getOutputStream());
             // create file to read error page content
             File f = new File(filePath);
             if (!f.exists()) {
                 sendResponse(404, "Page not found");
                 return;
+            } else if (f.isDirectory()) { // TODO check if directory browsing is enabled
+                sendDirectoryListingResponse(f);
+                return;
             }
+
+            out = new DataOutputStream(sok.getOutputStream());
+
             // send initial line of header
             out.writeBytes(createInitialResponseLine(200, reqparser.getHttpVersion()));
             // send headers (also get file content-type and length)
@@ -127,6 +133,7 @@ public class RequestHandler implements Runnable {
         }
     }
 
+    /* send error page response */
     protected void sendResponse(int responseCode, String cause)
     {
         final String ERRORPAGE_LOCATION = "./ErrorPages/404.html";
@@ -173,6 +180,53 @@ public class RequestHandler implements Runnable {
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    protected void sendDirectoryListingResponse(File directory)
+    {
+        DataOutputStream out = null;
+        String temp = directory.getParentFile().getAbsolutePath();
+
+        String directoryListing = "";
+
+        /* create up one folder link */
+        if (!temp.contains(Settings.webRoot)) // If the file is not in a webroot folder: turn it into an empty string
+            temp = "";
+        temp = temp.replaceFirst(Settings.webRoot, "");
+        directoryListing = "<a href='../" + temp + "'>up</a><br /><br />";
+
+        /* create file links */
+        try {
+            /* vraag lijst van bestanden op met listFiles */
+            File[] listOfFiles = directory.listFiles();
+            out = new DataOutputStream(sok.getOutputStream());
+
+            /* ga over de lijst van files heen en maak html */
+            for (int i = 0; i < listOfFiles.length; i++) {
+                temp = listOfFiles[i].getAbsolutePath();
+                /* absolute file name - webroot = path to file */
+                if (!temp.contains(Settings.webRoot)) // If the file is not in a webroot folder: turn it into an empty string
+                    temp = "";
+                temp = temp.replaceFirst(Settings.webRoot, "");
+                // TODO stukje html toevoegen behalve de file
+                if (listOfFiles[i].isDirectory())
+                    directoryListing += "<a href='" + temp + "'><b>" + listOfFiles[i].getName() + "</b></a><br />";
+                else
+                    directoryListing += "<a href='" + temp + "'>" + listOfFiles[i].getName() + "</a><br />";
+            }
+
+            // send initial line of header
+            out.writeBytes(createInitialResponseLine(200, reqparser.getHttpVersion()));
+            // send headers (also get file content-type and length)
+            out.writeBytes(createResponsHeaders("text/html", directoryListing.getBytes("UTF-8").length)); // TODO UTF-8 wordt gebruikt als encoding. is dit juist?
+
+            // FIXME string wordt niet in chunks teruggegeven. Bij Files is dit wel
+            out.write(directoryListing.getBytes("UTF-8"));
+
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
     }
 
