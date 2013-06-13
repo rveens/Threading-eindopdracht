@@ -11,7 +11,6 @@ Controlserver
 - Log file moet ingeladen worden in het settings paneel
 - Meerdere users moeten beheerd kunnen worden
 	- Admin en superuser
-- Directory browsing ondersteunen
 
 OWASP top 10 en beveiliging
 - OWASP java library
@@ -27,14 +26,16 @@ WebServer
 - HTTPRequestParser
 	- httpinvalidrequestexception wordt soms opgegooid vanwege null
 	    - Heeft dit temaken met de flush methode die we misschien moeten aanroepen?
+	    - firefox closed de socket en er wordt nog naar geluisterd? (of naar geschreven?)
 	- Niet via de browser invalid requests testen
-	- Lees alle regels uit de quest
+	- Lees alle regels uit de request
 - Stuurt correcte responde header
 	- Stuurt correcte mime type
 	- Stuurt correcte content-length
 	- Juiste http status codes
 x Https (met certificaat?, encrypted)
-- Directory browsing ondersteunen
+x Directory browsing ondersteunen
+    - Setting aanpassen moet nog
 x Pagina's met foutmeldingen (404, forbidden etc)
 	x deze in een aparte map
 - Na een tijdje krijgt de webserver allemaal 'null' regels binnen. Exceptions worden opgegooid

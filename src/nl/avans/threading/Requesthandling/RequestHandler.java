@@ -66,7 +66,7 @@ public class RequestHandler implements Runnable {
 
     protected void handleGETRequest()
     {
-        if (reqparser.getUrl().equals("/")) {
+        if (reqparser.getUrl().equals("/") && !Settings.directoryBrowsing) {
             sendResponse(Settings.webRoot + "/" + Settings.defaultPage);
         } else {
             sendResponse(Settings.webRoot + reqparser.getUrl());
