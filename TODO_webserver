@@ -1,14 +1,18 @@
+- = todo
+x = done
+o = optional
+
 Controlserver
 - Inloggen (met cookies?)
 	- redirect (of vanuit de server of client?) na inloggen naar settings scherm
 - Settings scherm niet toegankelijk als niet ingelogd
-- Huidige settings inladen
+x Huidige settings inladen
 - Server restarten na een post (en hoe?)
 	- Exception opgooien
 - Server geeft nog geen response terug na een post
 	- Hoe weet je dat je naar een andere pagina moet gaan?
 - webroot pad krijgt percent tekens in de string
-- Log file moet ingeladen worden in het settings paneel
+x Log file moet ingeladen worden in het settings paneel
 - Meerdere users moeten beheerd kunnen worden
 	- Admin en superuser
 
@@ -28,10 +32,10 @@ WebServer
 	    - Heeft dit temaken met de flush methode die we misschien moeten aanroepen?
 	    - firefox closed de socket en er wordt nog naar geluisterd? (of naar geschreven?)
 	- Niet via de browser invalid requests testen
-	- Lees alle regels uit de request
+	- Lees alle regels uit de request (?)
 - Stuurt correcte responde header
-	- Stuurt correcte mime type
-	- Stuurt correcte content-length
+	x Stuurt correcte mime type
+	x Stuurt correcte content-length
 	- Juiste http status codes
 x Https (met certificaat?, encrypted)
 x Directory browsing ondersteunen
@@ -39,12 +43,12 @@ x Directory browsing ondersteunen
 x Pagina's met foutmeldingen (404, forbidden etc)
 	x deze in een aparte map
 - Na een tijdje krijgt de webserver allemaal 'null' regels binnen. Exceptions worden opgegooid
-- Eventueel HTTPS inbouwen in de webserver behalve bij het control panel
+o Eventueel HTTPS inbouwen in de webserver behalve bij het control panel
 
 Logger
 - Hele URL
 - IP adress van de aanvrager
-- Datum en tijd + tijdsduur
+x Datum en tijd + tijdsduur
 - Logger testen op multithreaded 10+ threads
 
 Testplan

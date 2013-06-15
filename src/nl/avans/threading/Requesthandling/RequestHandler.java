@@ -57,11 +57,11 @@ public class RequestHandler implements Runnable {
 
             //LOGGING
             long elapsedTimeMillis = System.currentTimeMillis()-timeStart;
-            logger.LogMessage(reqparser.getHttpMethod() + " " + reqparser.getUrl() + " Request took: " + elapsedTimeMillis + "ms" + " <" + sok.getInetAddress().getHostAddress() + ">");
+            logger.LogMessage(reqparser.getHttpMethod() + " " + reqparser.getUrl() + " Request took: " + elapsedTimeMillis + "ms" + " <" + sok.getRemoteSocketAddress() + ">");
 
             // TODO Sluit de socket -> niet met http1.1
-            if (!reqparser.getHeader("connection").equals("keep-alive"))
-                sok.close();
+//            if (!reqparser.getHeader("connection").equals("keep-alive"))
+            sok.close();
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
