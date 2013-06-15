@@ -12,6 +12,7 @@ import java.sql.*;
  */
 public class DataIOHandler {
 
+    private static DataIOHandler _instance;
     Connection dbConnection;
 
     //CONFIGURATION//
@@ -20,10 +21,17 @@ public class DataIOHandler {
     //String dbUsername = "root";
     //String dbPassword = "fDb4tcwT38Dd";
 
-    public DataIOHandler()
+    private DataIOHandler()
     {
         //next statement for testing purposes only
-        System.out.println(verifyUserPassword("pascal", "q83uoq8ydro3c"));
+        //System.out.println(verifyUserPassword("pascal", "q83uoq8ydro3c"));
+    }
+
+    public static DataIOHandler getInstance()
+    {
+        if (_instance == null)
+            _instance = new DataIOHandler();
+        return _instance;
     }
 
     /*
@@ -62,6 +70,8 @@ public class DataIOHandler {
         } catch (SQLException e) {
             System.out.println("SQLException: " + e.getMessage());
         }
+        if (result == null)
+            result = new String[]{"", "", ""}; //not nice
         return result;
     }
 

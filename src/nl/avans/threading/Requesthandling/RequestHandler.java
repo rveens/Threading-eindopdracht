@@ -1,14 +1,17 @@
 package nl.avans.threading.Requesthandling;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import nl.avans.threading.Logging.Logger;
 import nl.avans.threading.Settings;
+import nl.avans.threading.SettingsIOHandler;
 import nl.avans.threading.WebserverConstants;
 
+import javax.activation.FileTypeMap;
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Hashtable;
 
 /**
  * Created with IntelliJ IDEA.
@@ -73,7 +76,7 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    protected void handlePOSTRequest()
+    protected void handlePOSTRequest() throws HTTPInvalidRequestException
     {
         handleNOTSUPPORTEDRequest();
     }
@@ -163,6 +166,20 @@ public class RequestHandler implements Runnable {
             out.close();
         } catch (Exception e) {
             sendInternalErrorResponse(e.getMessage());
+        }
+    }
+
+    protected void sendTextResponse(String content)
+    {
+        DataOutputStream out = null;
+        try {
+            out = new DataOutputStream(sok.getOutputStream());
+            out.writeBytes(createInitialResponseLine(200, reqparser.getHttpVersion()));
+            out.writeBytes(createResponsHeaders("text/html", content.getBytes().length));
+            out.writeBytes(content);
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

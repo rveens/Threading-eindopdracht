@@ -4,12 +4,8 @@ import nl.avans.threading.Settings;
 import nl.avans.threading.SettingsIOHandler;
 
 import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.net.Socket;
 import java.util.Hashtable;
-import java.util.Scanner;
 
 /**
  * Created with IntelliJ IDEA.
@@ -29,12 +25,7 @@ public class ControlServerRequestHandler extends RequestHandler {
         if (reqparser.getUrl().equals("/")) {
             sendResponse(Settings.controlWebRoot + "/" + Settings.defaultControlPage);
         } else {
-            /* custom requests! */
-            if ( reqparser.getUrl().equals("/log") ) {
-                /* send log file back */
-                sendResponse(Settings.logLocation);
-            } else // Do a normal response instead
-                sendResponse(Settings.controlWebRoot + reqparser.getUrl());
+            sendResponse(Settings.controlWebRoot + reqparser.getUrl());
         }
     }
 
