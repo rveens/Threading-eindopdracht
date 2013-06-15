@@ -24,7 +24,9 @@ public class ControlServerRequestHandler extends RequestHandler {
     {
         if (reqparser.getUrl().equals("/")) {
             sendResponse(Settings.controlWebRoot + "/" + Settings.defaultControlPage);
-        } else {
+        } else if (reqparser.getUrl().equals("/log"))
+            sendResponse(Settings.logLocation);
+        else {
             sendResponse(Settings.controlWebRoot + reqparser.getUrl());
         }
     }
