@@ -106,8 +106,11 @@ public class RequestHandler implements Runnable {
             if (!f.exists()) {
                 sendResponse(404, "Page not found");
                 return;
-            } else if (f.isDirectory()) { // TODO check if directory browsing is enabled
+            } else if (f.isDirectory() && Settings.directoryBrowsing) {
                 sendDirectoryListingResponse(f);
+                return;
+            } else if (f.isDirectory()) {
+                sendResponse(404, "Page not found");
                 return;
             }
 
@@ -230,7 +233,7 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private void sendInternalErrorResponse(String cause)
+    protected void sendInternalErrorResponse(String cause)
     {
         logger.LogMessage("ERROR: " + "500 - " + cause);
         DataOutputStream out = null;
