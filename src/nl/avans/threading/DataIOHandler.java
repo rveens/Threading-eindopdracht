@@ -3,6 +3,7 @@ import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
 
 import java.security.*;
 import java.sql.*;
+import java.util.ArrayList;
 
 /**
  * Created with IntelliJ IDEA.
@@ -44,6 +45,26 @@ public class DataIOHandler {
         System.out.println(passwordHashFromGivenCredentials); //for testing purposes only
         System.out.println(passwordHashFromDB);               //for testing purposes only
         return passwordHashFromDB != null && passwordHashFromDB.equals(passwordHashFromGivenCredentials);
+    }
+
+    public ArrayList<String[]> getUsersData()
+    {
+        ArrayList<String[]> result = new ArrayList<String[]>();
+
+        try {
+            dbConnection = DriverManager.getConnection(Settings.dbUrl + Settings.dbName, Settings.dbUsername, Settings.dbPassword);
+            PreparedStatement prepStatement = dbConnection.prepareStatement("SELECT id, name FROM `users`;");
+            ResultSet resultSet = prepStatement.executeQuery();
+            while (resultSet.next()) {
+                result.add(new String[] { resultSet.getString(1), resultSet.getString(2) } );
+            }
+
+            dbConnection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+        return result;
     }
 
     /*

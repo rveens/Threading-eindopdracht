@@ -5,6 +5,7 @@ import nl.avans.threading.Settings;
 import nl.avans.threading.SettingsIOHandler;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.File;
@@ -13,6 +14,10 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.sql.Array;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 /**
@@ -34,25 +39,59 @@ public class ControlServerRequestHandler extends RequestHandler {
             sendResponse(Settings.controlWebRoot + "/" + Settings.defaultControlPage);
         } else if (reqparser.getUrl().equals("/log"))
             sendResponse(Settings.logLocation);
-        else if (reqparser.getUrl().equals("/settings.html")) {
-            /* stop de huidige settings in een kopie van settings.html */
+        else if (reqparser.getUrl().equals("/settings.html"))
             handleGETsettingsRequest();
-        } else {
+        else if (reqparser.getUrl().equals("/users.html"))
+            handleGETusersRequest();
+        else {
             sendResponse(Settings.controlWebRoot + reqparser.getUrl());
+        }
+    }
+
+    private void handleGETusersRequest()
+    {
+        DataIOHandler handler = DataIOHandler.getInstance();
+        ArrayList<String[]> usrdata = handler.getUsersData();
+
+        try {
+            /* stop de huidige settings in een kopie van users.html */
+            File ft = File.createTempFile("tempusers", ".tmp");
+            File settings = new File(Settings.controlWebRoot + "/users.html");
+            Files.copy(settings.toPath(), ft.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+            /* we gebruiken jsoup */
+            Document doc = Jsoup.parse(ft, "UTF-8"); // inladen
+
+            /* users erin gooien */
+            Element usersTable = doc.select("#users").first();
+            usersTable.append("<th>ID</th><th>Username</th>");
+            for (int i = 0; i < usrdata.size(); i++)
+                usersTable.append(String.format("<tr><td>%s</td><td>%s</td></tr>", usrdata.get(i)[0], usrdata.get(i)[1]));
+
+            /* wijzigingen opslaan naar de temp file */
+            PrintWriter writer = new PrintWriter(ft, "UTF-8");
+            writer.write(doc.html());
+            writer.close();
+
+            /* bestand terug sturen */
+            sendResponse(ft.getPath());
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
     }
 
     private void handleGETsettingsRequest()
     {
         try {
+            /* stop de huidige settings in een kopie van settings.html */
             File ft = File.createTempFile("tempsettings", ".tmp");
             File settings = new File(Settings.controlWebRoot + "/settings.html");
             Files.copy(settings.toPath(), ft.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-                /* we gebruiken jsoup */
+            /* we gebruiken jsoup */
             Document doc = Jsoup.parse(ft, "UTF-8"); // inladen
 
-                /* huidige settings erin gooien */
+            /* huidige settings erin gooien */
             Elements webport = doc.select("#inputWebPort");
             webport.get(0).attr("value", Integer.toString(Settings.webPort));
             Elements controlport = doc.select("#inputControlPort");
@@ -64,11 +103,12 @@ public class ControlServerRequestHandler extends RequestHandler {
             Elements dirbrowse = doc.select("#inputDirectoryBrowsing");
             dirbrowse.get(0).attr("value", Boolean.toString(Settings.directoryBrowsing));
 
-                /* wijzigingen opslaan naar de temp file */
+            /* wijzigingen opslaan naar de temp file */
             PrintWriter writer = new PrintWriter(ft, "UTF-8");
             writer.write(doc.html());
             writer.close();
-                /* bestand terug sturen */
+
+            /* bestand terug sturen */
             sendResponse(ft.getPath());
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

@@ -8,7 +8,7 @@
 <entry key="log-location">log.txt</entry>
 <entry key="db-name">webservAuth</entry>
 <entry key="db-url">jdbc:mysql://localhost:3306/</entry>
-<entry key="db-password">fDb4tcwT38Dd</entry>
+<entry key="db-password">test</entry>
 <entry key="default-control-page">login.html</entry>
 <entry key="web-port">8080</entry>
 <entry key="default-page">index.html</entry>
