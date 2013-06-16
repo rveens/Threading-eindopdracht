@@ -83,7 +83,8 @@ public class ControlServerRequestHandler extends RequestHandler {
             if (contentBody.get("username") != null) { // check if post came from login-page
                 if (handleLoginFormData(contentBody)) {
                     logger.LogMessage("Login attempt succeeded");
-                    sendResponse(Settings.controlWebRoot + "/settings.html");
+                    handleGETsettingsRequest();
+                    //sendResponse(Settings.controlWebRoot + "/settings.html");
                 }
                 else {
                     logger.LogMessage("Login attempt failed");
