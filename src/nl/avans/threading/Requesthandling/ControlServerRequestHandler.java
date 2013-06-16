@@ -64,9 +64,15 @@ public class ControlServerRequestHandler extends RequestHandler {
 
             /* users erin gooien */
             Element usersTable = doc.select("#users").first();
-            usersTable.append("<th>ID</th><th>Username</th>");
             for (int i = 0; i < usrdata.size(); i++)
-                usersTable.append(String.format("<tr><td>%s</td><td>%s</td></tr>", usrdata.get(i)[0], usrdata.get(i)[1]));
+                usersTable.append(String.format("<tr><td>" +
+                        "<form action='users.html' method='post' class='form-inline'>" +
+                        "ID: <input type='text' value='%s' disabled='disabled' class='input-small'>" +
+                        " Username: <input type='text' name='username' value='%s' class='input-small'>" +
+                        "<input type='submit' name='update' value='Update' class='btn-warning'>" +
+                        "<input type='submit' name='delete' value='Delete' class='btn-danger'>" +
+                        "</form>" +
+                        "</td><tr>", usrdata.get(i)[0], usrdata.get(i)[1]));
 
             /* wijzigingen opslaan naar de temp file */
             PrintWriter writer = new PrintWriter(ft, "UTF-8");
