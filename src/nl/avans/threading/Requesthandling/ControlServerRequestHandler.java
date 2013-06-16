@@ -67,10 +67,13 @@ public class ControlServerRequestHandler extends RequestHandler {
             for (int i = 0; i < usrdata.size(); i++)
                 usersTable.append(String.format("<tr><td>" +
                         "<form action='users.html' method='post' class='form-inline'>" +
-                        "ID: <input type='text' value='%s' disabled='disabled' class='input-small'>" +
+                        "ID: <input type='text' name='ID' value='%s' class='input-small'>" +
                         " Username: <input type='text' name='username' value='%s' class='input-small'>" +
                         "<input type='submit' name='update' value='Update' class='btn-warning'>" +
                         "<input type='submit' name='delete' value='Delete' class='btn-danger'>" +
+                        "<label class='checkbox'>" +
+                            "Admin <input name='isAdmin' value='false' type='checkbox'>" +
+                        "</label>" +
                         "</form>" +
                         "</td><tr>", usrdata.get(i)[0], usrdata.get(i)[1]));
 
@@ -124,6 +127,40 @@ public class ControlServerRequestHandler extends RequestHandler {
     @Override
     protected void handlePOSTRequest() throws HTTPInvalidRequestException
     {
+        if (reqparser.getUrl().equals("/"))  { // login page
+            handleLoginPOSTRequest();
+        } else if (reqparser.getUrl().equals("/users.html")) {
+            handleUsersPOSTRequest();
+        }
+    }
+
+    private void handleUsersPOSTRequest()
+    {
+        Hashtable<String, String> contentBody = reqparser.getContentBody();
+        DataIOHandler datahandler = DataIOHandler.getInstance();
+
+        if (contentBody != null) {
+            /* kijk of we alle waardes hebben... */
+            if (contentBody.get("username") == null ||
+                    contentBody.get("isAdmin") == null ||
+                    contentBody.get("ID") == null) {
+                // TODO THROW UP AN ERROR PAGE
+            }
+            if (contentBody.get("update") != null) { // handle update
+                datahandler.UpdateUser(Integer.parseInt(contentBody.get("ID")), contentBody.get("username"));
+                // TODO handle failed
+                handleGETusersRequest();
+            } else if (contentBody.get("delete") != null) { // handle delete
+                // TODO handle failed
+                datahandler.DestroyUser(Integer.parseInt(contentBody.get("ID")));
+                handleGETusersRequest();
+            } else {
+                // TODO THROW UP AN ERROR PAGE
+            }
+        }
+    }
+
+    private void handleLoginPOSTRequest() throws HTTPInvalidRequestException {
         Hashtable<String, String> contentBody = reqparser.getContentBody();
         if (contentBody != null) {
             if (contentBody.get("username") != null) { // check if post came from login-page
@@ -150,7 +187,7 @@ public class ControlServerRequestHandler extends RequestHandler {
                 throw new HTTPInvalidRequestException(400, "POST for this form not required");
             }
         } else {
-            //THROW UP AN ERROR PAGE
+            // TODO THROW UP AN ERROR PAGE
         }
     }
 

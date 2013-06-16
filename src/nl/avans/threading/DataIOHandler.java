@@ -47,6 +47,9 @@ public class DataIOHandler {
         return passwordHashFromDB != null && passwordHashFromDB.equals(passwordHashFromGivenCredentials);
     }
 
+    /*
+    *  Retrieves all of the user data
+    */
     public ArrayList<String[]> getUsersData()
     {
         ArrayList<String[]> result = new ArrayList<String[]>();
@@ -65,6 +68,47 @@ public class DataIOHandler {
         }
 
         return result;
+    }
+
+    public boolean DestroyUser(int userID)
+    {
+        boolean success = false;
+
+        // TODO check if authorized
+        try {
+            dbConnection = DriverManager.getConnection(Settings.dbUrl + Settings.dbName, Settings.dbUsername, Settings.dbPassword);
+            PreparedStatement prepStatement = dbConnection.prepareStatement("DELETE FROM `users` WHERE id = (?)");
+            prepStatement.setInt(1, userID);
+            /* Geeft boolean terug */
+            success = prepStatement.execute();
+
+            dbConnection.close();
+        } catch (SQLException e) {
+            System.out.println("SQLException: " + e.getMessage());
+        }
+
+        return success;
+    }
+
+    public boolean UpdateUser(int userID, String username) // TODO add isAdmin
+    {
+        boolean success = false;
+
+        // TODO check if authorized
+        try {
+            dbConnection = DriverManager.getConnection(Settings.dbUrl + Settings.dbName, Settings.dbUsername, Settings.dbPassword);
+            PreparedStatement prepStatement = dbConnection.prepareStatement("UPDATE `users` SET name=(?) WHERE id = (?)"); // TODO encryption
+            prepStatement.setString(1, username);
+            prepStatement.setInt(2, userID);
+            /* Geeft boolean terug */
+            success = prepStatement.execute();
+
+            dbConnection.close();
+        } catch (SQLException e) {
+            System.out.println("SQLException: " + e.getMessage());
+        }
+
+        return success;
     }
 
     /*
