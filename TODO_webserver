@@ -1,6 +1,7 @@
 - = todo
 x = done
 o = optional
+? = unverified
 
 Controlserver
 - /log werkt wel maar /log/ niet, is dit erg?
@@ -12,9 +13,9 @@ x Huidige settings inladen
 	- Exception opgooien
 - Server geeft nog geen response terug na een post
 	- Hoe weet je dat je naar een andere pagina moet gaan?
-- webroot pad krijgt percent tekens in de string
+? webroot pad krijgt percent tekens in de string
 x Log file moet ingeladen worden in het settings paneel
-- Meerdere users moeten beheerd kunnen worden
+x Meerdere users moeten beheerd kunnen worden
 	- Admin en superuser
 
 OWASP top 10 en beveiliging
