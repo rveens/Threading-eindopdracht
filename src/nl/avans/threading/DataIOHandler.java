@@ -90,6 +90,25 @@ public class DataIOHandler {
         return success;
     }
 
+    public boolean CreateUser()
+    {
+        boolean success = false;
+
+        // TODO check if authorized
+        try {
+            dbConnection = DriverManager.getConnection(Settings.dbUrl + Settings.dbName, Settings.dbUsername, Settings.dbPassword);
+            PreparedStatement prepStatement = dbConnection.prepareStatement("INSERT INTO `users`(name, password) VALUES('NO_NAME', '348F78649D9B7E37305C504C00E46A669307FE426C613E7A7B2D1216E5798034') "); // TODO encryption, isadmin
+            /* Geeft boolean terug */
+            success = prepStatement.execute();
+
+            dbConnection.close();
+        } catch (SQLException e) {
+            System.out.println("SQLException: " + e.getMessage());
+        }
+
+        return success;
+    }
+
     public boolean UpdateUser(int userID, String username) // TODO add isAdmin
     {
         boolean success = false;

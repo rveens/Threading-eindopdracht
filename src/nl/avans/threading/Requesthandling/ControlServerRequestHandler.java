@@ -64,16 +64,17 @@ public class ControlServerRequestHandler extends RequestHandler {
 
             /* users erin gooien */
             Element usersTable = doc.select("#users").first();
+            /* per user */
             for (int i = 0; i < usrdata.size(); i++)
                 usersTable.append(String.format("<tr><td>" +
                         "<form action='users.html' method='post' class='form-inline'>" +
-                        "ID: <input type='text' name='ID' value='%s' class='input-small'>" +
+                        "ID: <input type='text' name='ID' value='%s' readonly='readonly' class='input-small'>" +
                         " Username: <input type='text' name='username' value='%s' class='input-small'>" +
+                        "<label class='checkbox'>" +
+                        "Admin <input name='isAdmin' value='false' type='checkbox'>" +
+                        "</label>" +
                         "<input type='submit' name='update' value='Update' class='btn-warning'>" +
                         "<input type='submit' name='delete' value='Delete' class='btn-danger'>" +
-                        "<label class='checkbox'>" +
-                            "Admin <input name='isAdmin' value='false' type='checkbox'>" +
-                        "</label>" +
                         "</form>" +
                         "</td><tr>", usrdata.get(i)[0], usrdata.get(i)[1]));
 
@@ -153,6 +154,10 @@ public class ControlServerRequestHandler extends RequestHandler {
             } else if (contentBody.get("delete") != null) { // handle delete
                 // TODO handle failed
                 datahandler.DestroyUser(Integer.parseInt(contentBody.get("ID")));
+                handleGETusersRequest();
+            } else if (contentBody.get("new") != null) { // handle create
+                // TODO handle failed
+                datahandler.CreateUser();
                 handleGETusersRequest();
             } else {
                 // TODO THROW UP AN ERROR PAGE
