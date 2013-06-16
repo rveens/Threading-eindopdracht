@@ -3,6 +3,7 @@ x = done
 o = optional
 
 Controlserver
+- /log werkt wel maar /log/ niet, is dit erg?
 - Inloggen (met cookies?)
 	- redirect (of vanuit de server of client?) na inloggen naar settings scherm
 - Settings scherm niet toegankelijk als niet ingelogd

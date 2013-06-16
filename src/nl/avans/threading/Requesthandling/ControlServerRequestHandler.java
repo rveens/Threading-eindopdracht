@@ -38,37 +38,42 @@ public class ControlServerRequestHandler extends RequestHandler {
             sendResponse(Settings.logLocation);
         else if (reqparser.getUrl().equals("/settings.html")) {
             /* stop de huidige settings in een kopie van settings.html */
-            try {
-                File ft = File.createTempFile("tempsettings", ".tmp");
-                File settings = new File(Settings.controlWebRoot + "/settings.html");
-                Files.copy(settings.toPath(), ft.toPath(), StandardCopyOption.REPLACE_EXISTING);
-
-                /* we gebruiken jsoup */
-                Document doc = Jsoup.parse(ft, "UTF-8"); // inladen
-
-                /* huidige settings erin gooien */
-                Elements webport = doc.select("#inputWebPort");
-                webport.get(0).attr("value", Integer.toString(Settings.webPort));
-                Elements controlport = doc.select("#inputControlPort");
-                controlport.get(0).attr("value", Integer.toString(Settings.controlPort));
-                Elements webroot = doc.select("#inputWebroot");
-                webroot.get(0).attr("value", Settings.webRoot);
-                Elements defpage = doc.select("#inputDefaultPage");
-                defpage.get(0).attr("value", Settings.defaultPage);
-                Elements dirbrowse = doc.select("#inputDirectoryBrowsing");
-                dirbrowse.get(0).attr("value", Boolean.toString(Settings.directoryBrowsing));
-
-                /* wijzigingen opslaan naar de temp file */
-                PrintWriter writer = new PrintWriter(ft, "UTF-8");
-                writer.write(doc.html());
-                writer.close();
-                /* bestand terug sturen */
-                sendResponse(ft.getPath());
-            } catch (IOException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
+            handleGETsettingsRequest();
         } else {
             sendResponse(Settings.controlWebRoot + reqparser.getUrl());
+        }
+    }
+
+    private void handleGETsettingsRequest()
+    {
+        try {
+            File ft = File.createTempFile("tempsettings", ".tmp");
+            File settings = new File(Settings.controlWebRoot + "/settings.html");
+            Files.copy(settings.toPath(), ft.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+                /* we gebruiken jsoup */
+            Document doc = Jsoup.parse(ft, "UTF-8"); // inladen
+
+                /* huidige settings erin gooien */
+            Elements webport = doc.select("#inputWebPort");
+            webport.get(0).attr("value", Integer.toString(Settings.webPort));
+            Elements controlport = doc.select("#inputControlPort");
+            controlport.get(0).attr("value", Integer.toString(Settings.controlPort));
+            Elements webroot = doc.select("#inputWebroot");
+            webroot.get(0).attr("value", Settings.webRoot);
+            Elements defpage = doc.select("#inputDefaultPage");
+            defpage.get(0).attr("value", Settings.defaultPage);
+            Elements dirbrowse = doc.select("#inputDirectoryBrowsing");
+            dirbrowse.get(0).attr("value", Boolean.toString(Settings.directoryBrowsing));
+
+                /* wijzigingen opslaan naar de temp file */
+            PrintWriter writer = new PrintWriter(ft, "UTF-8");
+            writer.write(doc.html());
+            writer.close();
+                /* bestand terug sturen */
+            sendResponse(ft.getPath());
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
     }
 
