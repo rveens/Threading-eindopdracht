@@ -122,4 +122,10 @@ public class ControlServerRequestHandler extends RequestHandler {
                 contentBody.get("inputDefaultPage"),
                 false));
     }
+
+    @Override
+    protected boolean isAuthenticated(String pageURL)
+    {
+        return true;
+    }
 }
