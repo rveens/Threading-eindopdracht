@@ -1,13 +1,12 @@
 package nl.avans.threading.Requesthandling;
 
+import nl.avans.threading.DataIOHandler;
 import nl.avans.threading.Settings;
 import nl.avans.threading.SettingsIOHandler;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import javax.xml.bind.Element;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,7 +14,6 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Hashtable;
-import java.util.Scanner;
 
 /**
  * Created with IntelliJ IDEA.
@@ -78,22 +76,49 @@ public class ControlServerRequestHandler extends RequestHandler {
     }
 
     @Override
-    protected void handlePOSTRequest()
+    protected void handlePOSTRequest() throws HTTPInvalidRequestException
     {
-        DataOutputStream out = null;
-
         Hashtable<String, String> contentBody = reqparser.getContentBody();
         if (contentBody != null) {
-            if (SettingsIOHandler.saveChanges(Integer.parseInt(contentBody.get("inputWebPort")),
-                    Integer.parseInt(contentBody.get("inputControlPort")),
-                    contentBody.get("inputWebroot"),
-                    contentBody.get("inputDefaultPage"),
-                    false))
-                logger.LogMessage("settings file updated by control-panel");
-            //TODO SERVER SHOULD REBOOT
+            if (contentBody.get("username") != null) { // check if post came from login-page
+                if (handleLoginFormData(contentBody)) {
+                    logger.LogMessage("Login attempt succeeded");
+                    sendResponse(Settings.controlWebRoot + "/settings.html");
+                }
+                else {
+                    logger.LogMessage("Login attempt failed");
+                    sendResponse(Settings.controlWebRoot + "/login.html");
+                }
+            } else if (contentBody.get("inputWebPort") != null) { // check if post came from settings-page
+                if (handleSettingsFormData(contentBody)) {
+                    logger.LogMessage("Settings change attempt succeeded");
+                    sendTextResponse("Settings applied, server will restart"); //GIVE PAGE WITH SERVER WILL REBOOT
+                    //TODO SERVER SHOULD REBOOT
+                }
+                else {
+                    logger.LogMessage("Settings change attempt failed");
+                    sendResponse(Settings.controlWebRoot + "/settings.html");
+                }
+            } else {
+                throw new HTTPInvalidRequestException(400, "POST for this form not required");
+            }
         } else {
             //THROW UP AN ERROR PAGE
         }
-        //TODO ADD RESPONSE
+    }
+
+    private boolean handleLoginFormData(Hashtable<String, String> contentBody)
+    {
+        DataIOHandler dataIOHandler = DataIOHandler.getInstance();
+        return (dataIOHandler.verifyUserPassword(contentBody.get("username"), contentBody.get("password")));
+    }
+
+    private boolean handleSettingsFormData(Hashtable<String, String> contentBody)
+    {
+        return (SettingsIOHandler.saveChanges(Integer.parseInt(contentBody.get("inputWebPort")),
+                Integer.parseInt(contentBody.get("inputControlPort")),
+                contentBody.get("inputWebroot"),
+                contentBody.get("inputDefaultPage"),
+                false));
     }
 }
