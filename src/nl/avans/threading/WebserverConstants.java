@@ -62,6 +62,16 @@ public class WebserverConstants {
             HttpReplies.put(Integer.parseInt(pair[0]), pair[1]);
     }
 
+    public static final Hashtable<Integer, String> HTTP_ERRORPAGE_LOCATIONS;
+    static {
+        HTTP_ERRORPAGE_LOCATIONS = new Hashtable<Integer, String>();
+        String[][] pairs = {{"400", "./ErrorPages/400.html"},
+                            {"401", "./ErrorPages/401.html"},
+                            {"404", "./ErrorPages/404.html"}};
+        for (String[] pair : pairs)
+            HTTP_ERRORPAGE_LOCATIONS.put(Integer.parseInt(pair[0]), pair[1]);
+    }
+
     public final static String
             GET = "GET",
             POST = "POST",

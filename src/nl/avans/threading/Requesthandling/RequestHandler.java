@@ -95,10 +95,20 @@ public class RequestHandler implements Runnable {
         }
     }
 
+    protected boolean isAuthenticated(String pageURL)
+    {
+        return true;
+    }
+
     /* send page response */
     protected void sendResponse(String filePath)
     {
         DataOutputStream out = null;
+
+        if (!isAuthenticated(filePath)) {
+            sendResponse(401, "User is not authenticated"); //TODO replace with unauthorized
+            return;
+        }
 
         try {
             // create file to read error page content
@@ -139,7 +149,7 @@ public class RequestHandler implements Runnable {
     /* send error page response */
     protected void sendResponse(int responseCode, String cause)
     {
-        final String ERRORPAGE_LOCATION = "./ErrorPages/404.html";
+        //final String ERRORPAGE_LOCATION = "./ErrorPages/401.html";
         DataOutputStream out = null;
         try {
             logger.LogMessage("ERROR: " + responseCode + " - " + cause);
@@ -150,7 +160,7 @@ public class RequestHandler implements Runnable {
             out = new DataOutputStream(sok.getOutputStream());
 
             // create file to read error page content
-            File f = new File(ERRORPAGE_LOCATION);
+            File f = new File(WebserverConstants.HTTP_ERRORPAGE_LOCATIONS.get(responseCode));
             if (!f.exists())
                 throw new Exception("Path to error page is not valid");
             // send initial line of header
