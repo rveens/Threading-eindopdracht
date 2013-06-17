@@ -14,7 +14,9 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Created with IntelliJ IDEA.
@@ -51,14 +53,14 @@ public class ControlServer extends Server
         return serverSocket;
     }
 
-        @Override
+    @Override
     public void run() {
         pool = Executors.newFixedThreadPool(WebserverConstants.MAX_CONCURRENT_THREADS); // TODO maar 1 thread pool voor allebei de servers?
 
         /*log start*/
         logger.LogMessage("ControlServer started listening on port: " + Settings.controlPort);
 
-        while (true) {
+        while (isRunning) {
             /* Wait for a new socket */
             //TODO Socket must be typeof https socket
             Socket sok = null; // TODO gebruik ssl socket en zet deze in global scope
@@ -69,10 +71,19 @@ public class ControlServer extends Server
 
                 /* Do the actual handling */
                 RequestHandler handler = new ControlServerRequestHandler(sok);
-                pool.execute(handler);
+                Future<?> future = pool.submit(handler); // submit ipv execute, want dan krijgen we een Future terug!
+                try {
+                    future.get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                } catch (ExecutionException e) {
+                    doRestart();
+                    throw new RestartWebServerRunTimeException("restart server");
+                }
             } catch (IOException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
         }
+        pool.shutdownNow();
     }
 }

@@ -8,8 +8,10 @@ import nl.avans.threading.WebserverConstants;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created with IntelliJ IDEA.
@@ -23,6 +25,7 @@ public class Server extends Thread {
     protected ServerSocket socketListen;  // Serversocket that wait (err, blocking call) for requests
     protected ExecutorService pool;       // Thread pool for limiting thread creation
     protected Logger logger;
+    protected static boolean isRunning = true;
 
     public Server(int port) throws IOException
     {
@@ -42,7 +45,7 @@ public class Server extends Thread {
         /*log start*/
         logger.LogMessage("Server started listening on port: " + Settings.webPort);
 
-        while (true) {
+        while (isRunning) {
             try {
                 Socket sok = null;
                 /* Wait for a request */
@@ -51,10 +54,19 @@ public class Server extends Thread {
                 /* Execute the request handling on another thread */
                 RequestHandler handler = new RequestHandler(sok);
                 pool.execute(handler);
+            } catch (SocketException se) {
+                se.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
             /* Keep going */
         }
+        pool.shutdown();
     }
+
+    public void doRestart() throws IOException {
+        isRunning = false;
+        socketListen.close(); // sluit de server socket, want hij kan nog aan het wachten zijn
+    }
+
 }

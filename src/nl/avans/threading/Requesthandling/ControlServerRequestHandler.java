@@ -1,6 +1,7 @@
 package nl.avans.threading.Requesthandling;
 
 import nl.avans.threading.*;
+import nl.avans.threading.Servers.RestartWebServerRunTimeException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -149,6 +150,7 @@ public class ControlServerRequestHandler extends RequestHandler {
                     //sendTextResponse("Settings applied, server will restart"); //GIVE PAGE WITH SERVER WILL REBOOT
                     sendResponse(Settings.controlWebRoot + "/settingsApplied.html");
                     //TODO SERVER SHOULD REBOOT
+                    throw new RestartWebServerRunTimeException("update settings");
                 }
                 else {
                     logger.LogMessage("Settings change attempt failed");

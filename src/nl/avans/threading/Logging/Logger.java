@@ -23,6 +23,7 @@ public class Logger extends Thread
     private int startIndex;                 // Start van de circular queue
     private int endIndex;                   // Einde van de circular queue
     private int currentSize;
+    private boolean isRunning = true;
 
     private Logger(String logFilePath)
     {
@@ -97,12 +98,14 @@ public class Logger extends Thread
         super.run();
 
         synchronized (fifoQueue) {
-            while (true) {
+            while (isRunning) {
 
                 /* Mocht de queue leeg zijn, dan moet er worden gewacht */
                 while (currentSize == 0) {
                     try {
                         fifoQueue.wait();
+                        if (!isRunning) // stop er maar mee als isRunning op false staat
+                            return;
                     } catch (InterruptedException e) {
                         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     }
@@ -129,6 +132,14 @@ public class Logger extends Thread
                 /* maak een thread wakker die een bericht wil loggen */
                 fifoQueue.notify();
             }
+        }
+    }
+
+    public void doClose()
+    {
+        synchronized (fifoQueue) {
+            isRunning = false;
+            fifoQueue.notify();
         }
     }
 }

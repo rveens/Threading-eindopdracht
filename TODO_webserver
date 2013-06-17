@@ -34,7 +34,7 @@ WebServer
 	    - Heeft dit temaken met de flush methode die we misschien moeten aanroepen?
 	    - firefox closed de socket en er wordt nog naar geluisterd? (of naar geschreven?)
 	- Niet via de browser invalid requests testen
-	- Lees alle regels uit de request (?)
+	x Lees alle regels uit de request (?)
 - Stuurt correcte responde header
 	x Stuurt correcte mime type
 	x Stuurt correcte content-length
@@ -46,6 +46,9 @@ x Pagina's met foutmeldingen (404, forbidden etc)
 	x deze in een aparte map
 - Na een tijdje krijgt de webserver allemaal 'null' regels binnen. Exceptions worden opgegooid
 o Eventueel HTTPS inbouwen in de webserver behalve bij het control panel
+- Uitloggen
+- Header secure? Altijd over https
+- username veranderen, wachtwoord resetten
 
 Logger
 - Hele URL
