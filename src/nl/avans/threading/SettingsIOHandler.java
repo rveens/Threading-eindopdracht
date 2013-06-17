@@ -90,7 +90,7 @@ public class SettingsIOHandler {
     private static String encodeParam(String param) throws Exception {
         //DONE prevent xml-injection by escaping characters like '<' and "'"
         if (!(param == null)) {
-            if (!param.matches("^[a-zA-Z0-9-/]+$")) //white listing
+            if (!param.matches("^[a-zA-Z0-9.-/]+$")) //white listing
                 throw new Exception("Possible injection detected");
         }
         return param;

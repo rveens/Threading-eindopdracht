@@ -154,7 +154,8 @@ public class ControlServerRequestHandler extends RequestHandler {
                 }
                 else {
                     logger.LogMessage("Settings change attempt failed");
-                    sendResponse(Settings.controlWebRoot + "/settings.html");
+                    //sendResponse(Settings.controlWebRoot + "/settings.html");
+                    handleGETsettingsRequest();
                 }
             } else if (reqparser.getUrl().equals("/users.html")) {
                 handleUsersPOSTRequest();
@@ -202,7 +203,7 @@ public class ControlServerRequestHandler extends RequestHandler {
         }
     }
 
-    private void handleLoginPOSTRequest() throws HTTPInvalidRequestException {
+    /*private void handleLoginPOSTRequest() throws HTTPInvalidRequestException {
         Hashtable<String, String> contentBody = reqparser.getContentBody();
         if (contentBody != null) {
             if (contentBody.get("username") != null) { // check if post came from login-page
@@ -232,7 +233,7 @@ public class ControlServerRequestHandler extends RequestHandler {
         } else {
             // TODO THROW UP AN ERROR PAGE
         }
-    }
+    }*/
 
     private boolean handleLoginFormData(Hashtable<String, String> contentBody)
     {
