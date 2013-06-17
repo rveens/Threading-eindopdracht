@@ -128,10 +128,41 @@ public class ControlServerRequestHandler extends RequestHandler {
     @Override
     protected void handlePOSTRequest() throws HTTPInvalidRequestException
     {
-        if (reqparser.getUrl().equals("/"))  { // login page
-            handleLoginPOSTRequest();
-        } else if (reqparser.getUrl().equals("/users.html")) {
-            handleUsersPOSTRequest();
+        if (!isAuthenticatedForPOSTRequest(reqparser.getUrl())) {
+            sendResponse(401, "User is not authenticated");
+            return;
+        }
+
+        Hashtable<String, String> contentBody = reqparser.getContentBody();
+        if (contentBody != null) {
+            if (contentBody.get("username") != null) { // check if post came from login-page
+                if (handleLoginFormData(contentBody)) {
+                    logger.LogMessage("Login attempt succeeded");
+                    buildSessionHeader(contentBody.get("username"));
+                    sendRedirect("/settings.html"); //redirect to settings page
+                }
+                else {
+                    logger.LogMessage("Login attempt failed");
+                    sendResponse(Settings.controlWebRoot + "/login.html");
+                }
+            } else if (contentBody.get("inputWebPort") != null) { // check if post came from settings-page
+                if (handleSettingsFormData(contentBody)) {
+                    logger.LogMessage("Settings change attempt succeeded");
+                    //sendTextResponse("Settings applied, server will restart"); //GIVE PAGE WITH SERVER WILL REBOOT
+                    sendResponse(Settings.controlWebRoot + "/settingsApplied.html");
+                    //TODO SERVER SHOULD REBOOT
+                }
+                else {
+                    logger.LogMessage("Settings change attempt failed");
+                    sendResponse(Settings.controlWebRoot + "/settings.html");
+                }
+            } else if (reqparser.getUrl().equals("/users.html")) {
+                handleUsersPOSTRequest();
+            } else {
+                throw new HTTPInvalidRequestException(400, "POST for this form not required");
+            }
+        } else {
+            // TODO THROW UP AN ERROR PAGE
         }
     }
 
@@ -172,7 +203,7 @@ public class ControlServerRequestHandler extends RequestHandler {
                 if (handleLoginFormData(contentBody)) {
                     logger.LogMessage("Login attempt succeeded");
                     buildSessionHeader(contentBody.get("username"));
-                    handleGETsettingsRequest();
+                    sendRedirect("/settings.html"); //redirect to settings page
                     //sendResponse(Settings.controlWebRoot + "/settings.html");
                 }
                 else {
@@ -215,8 +246,25 @@ public class ControlServerRequestHandler extends RequestHandler {
     @Override
     protected boolean isAuthenticated(String pageURL)
     {
+        AuthenticationHandler authHandler = AuthenticationHandler.getInstance();
+        //TODO check for authLevel in dictionary to create
         // only for <webroot>/login.html and <webroot>/css and <webroot>/js and <webroot>/img is no authentication needed
-        return true;//(pageURL.equals(Settings.controlWebRoot + "/login.html") || pageURL.contains(Settings.controlWebRoot + "/css/") || pageURL.contains(Settings.controlWebRoot + "/js/"));
+        //boolean isAuthenticated =
+        if (pageURL.startsWith("/css/") || pageURL.startsWith("/js/")  || pageURL.startsWith("/img/"))
+            return true;
+        Integer securityLvlPage = Settings.authorisationLookupGETReq.get(pageURL);
+        if (securityLvlPage == null)
+            securityLvlPage = WebserverConstants.SECURITYLEVEL_ADMIN;
+        return (authHandler.isValidSession(1, reqparser.getCookies().get("sessionId"), securityLvlPage));
+    }
+
+    private boolean isAuthenticatedForPOSTRequest(String pageURL)
+    {
+        AuthenticationHandler authHandler = AuthenticationHandler.getInstance();
+        Integer securityLvlPage = Settings.authorisationLookupPOSTReq.get(pageURL);
+        if (securityLvlPage == null)
+            securityLvlPage = WebserverConstants.SECURITYLEVEL_ADMIN;
+        return authHandler.isValidSession(1, reqparser.getCookies().get("sessionId"), securityLvlPage);
     }
 
     @Override
@@ -231,7 +279,7 @@ public class ControlServerRequestHandler extends RequestHandler {
     private void buildSessionHeader(String username)
     {
         AuthenticationHandler authHandler = AuthenticationHandler.getInstance();
-        final String secureCookiePart = "; Expires= " + WebserverConstants.DATE_FORMAT_RESPONSE.format(System.currentTimeMillis() + authHandler.MAX_SESSION_AGE) + "; Secure; HttpOnly";
+        final String secureCookiePart = "; Expires= " + WebserverConstants.DATE_FORMAT_RESPONSE.format(System.currentTimeMillis() + WebserverConstants.MAX_SESSION_AGE) + "; Secure; HttpOnly";
         sessionHeader = "Set-Cookie: userId=1" + secureCookiePart + "\n";
         sessionHeader += "Set-Cookie: sessionId=" + authHandler.setSession(username) + secureCookiePart;
     }

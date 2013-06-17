@@ -16,11 +16,6 @@ public class AuthenticationHandler
 {
     private static AuthenticationHandler _instance;
 
-    private final int SECURITYLEVEL_ADMIN = 0;
-    private final int SECURITYLEVEL_SUPERUSER = 1;
-    private final int SECURITYLEVEL_USER = 2;
-    public  final int MAX_SESSION_AGE = 300000; //300.000ms == 5 minutes
-
     private Hashtable<String, SessionData> sessionStorage; //SessionStorage is never cleared
 
     private AuthenticationHandler()
@@ -44,19 +39,23 @@ public class AuthenticationHandler
     /*
     *  Checks if users session is valid
     */
-    private boolean isValidSession(int userId, String sessionId, int requiredSecurityLevel)
+    public boolean isValidSession(int userId, String sessionId, int requiredSecurityLevel)
     {
+        if (requiredSecurityLevel == WebserverConstants.SECURITYLEVEL_USER) //no session needed
+            return true;
         if (sessionId == null)
             return false;
         else {
             SessionData userSessionData = sessionStorage.get(sessionId);
             if (userSessionData == null) //sessionId cannot be found in storage
                 return false;
-            if (requiredSecurityLevel == userSessionData.securityLevel) //user has no privilege to access a page
+            if (requiredSecurityLevel < userSessionData.securityLevel) //user has no privilege to access a page
                 return false;
             long currentTimestamp = System.currentTimeMillis();
-            if ((currentTimestamp - userSessionData.timeStampCreation) > MAX_SESSION_AGE) //session has expired
+            if ((currentTimestamp - userSessionData.timeStampCreation) > WebserverConstants.MAX_SESSION_AGE) { //session has expired
+                sessionStorage.remove(sessionId);
                 return false;
+            }
             if (userSessionData.userId != userId) //sessionId does not belong to current user
                 return false;
             return true; //everything is ok!
@@ -70,14 +69,14 @@ public class AuthenticationHandler
     public String setSession(String userName)
     {
         Logger logger = Logger.getInstance();
-        //DataIOHandler dataIOHandler = DataIOHandler.getInstance();
+        DataIOHandler dataIOHandler = DataIOHandler.getInstance();
         //Create random session hash
         String sessionId = nextSessionId();
 
         //Create session information data object
         SessionData userSessionData = new SessionData();
         userSessionData.userId = 1; //TODO get from DataIOHandler
-        userSessionData.securityLevel = 1; //TODO get from DataIOHandler
+        userSessionData.securityLevel = WebserverConstants.SECURITYLEVEL_ADMIN; //TODO get from DataIOHandler
         userSessionData.timeStampCreation = System.currentTimeMillis();
 
         //add session to storage

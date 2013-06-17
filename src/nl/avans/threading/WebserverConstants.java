@@ -90,4 +90,9 @@ public class WebserverConstants {
     }
 
     public final static int FILE_READ_CHUNK_SIZE = 1024;
+
+    public static final int SECURITYLEVEL_ADMIN = 0;
+    public static final int SECURITYLEVEL_SUPERUSER = 1;
+    public static final int SECURITYLEVEL_USER = 2;
+    public static final int MAX_SESSION_AGE = 300000; //300.000ms == 5 minutes
 }

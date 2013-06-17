@@ -196,4 +196,20 @@ public class HTTPRequestParser {
     public Hashtable<String, String> getContentBody() {
         return contentBody;
     }
+
+    public Hashtable<String, String> getCookies()
+    {
+        Hashtable<String, String> cookieStore = new Hashtable<String, String>();
+        String cookieString = getHeader("Cookie");
+        if (cookieString != null) {
+            String[] cookiePairs = cookieString.split(";");
+            for(String pair : cookiePairs)
+            {
+                String[] keyValue = pair.trim().split("=");
+                if (keyValue.length == 2)
+                    cookieStore.put(keyValue[0], keyValue[1]);
+            }
+        }
+        return cookieStore;
+    }
 }

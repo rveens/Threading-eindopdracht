@@ -105,16 +105,14 @@ public class RequestHandler implements Runnable {
     {
         DataOutputStream out = null;
 
-        if (!isAuthenticated(filePath)) {
-            sendResponse(401, "User is not authenticated"); //TODO replace with unauthorized
-            return;
-        }
-
         try {
             // create file to read error page content
             File f = new File(filePath);
             if (!f.exists()) {
                 sendResponse(404, "Page not found");
+                return;
+            } else if (!isAuthenticated(reqparser.getUrl())) {
+                sendResponse(401, "User is not authenticated"); //TODO replace with unauthorized
                 return;
             } else if (f.isDirectory() && Settings.directoryBrowsing) {
                 sendDirectoryListingResponse(f);
@@ -251,6 +249,23 @@ public class RequestHandler implements Runnable {
             out = new DataOutputStream(sok.getOutputStream());
             out.writeBytes(createInitialResponseLine(500, reqparser.getHttpVersion()));
             out.writeBytes(createResponsHeaders("text/html", 0));
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected void sendRedirect(String url)
+    {
+        logger.LogMessage("Redirect to: '" + url + "'");
+        DataOutputStream out = null;
+        final String sessionHeader = getSessionHeader();
+        try {
+            out = new DataOutputStream(sok.getOutputStream());
+            out.writeBytes(createInitialResponseLine(301, reqparser.getHttpVersion()));
+            if (!sessionHeader.equals(""))
+                out.writeBytes(sessionHeader + '\n');
+            out.writeBytes("Location: " + url + "\n\r\n");
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
