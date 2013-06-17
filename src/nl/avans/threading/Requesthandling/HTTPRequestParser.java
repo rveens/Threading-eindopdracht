@@ -51,8 +51,9 @@ public class HTTPRequestParser {
         System.out.println(initialRequestLine);
         /* Controleer de Initial Request Line op fouten */
         if (initialRequestLine == null || initialRequestLine.length() == 0) {
+            throw new NullPointerException("Initial request-line may not be null");
             // Waarschijnlijk een connectie fout
-            throw new HTTPInvalidRequestException(400, "Initial request-line may not be null");
+            //throw new HTTPInvalidRequestException(400, "Initial request-line may not be null");
         }
         if (Character.isWhitespace(initialRequestLine.charAt(0))) {
             // Eerste char mag geen whitespace zijn

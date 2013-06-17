@@ -53,6 +53,9 @@ public class RequestHandler implements Runnable {
             } catch (HTTPInvalidRequestException e) {
                 e.printStackTrace();
                 sendResponse(e.getResponseCode(), e.getMessage());
+            } catch (NullPointerException e) {
+                sok.close();
+                return;
             }
 
             //LOGGING

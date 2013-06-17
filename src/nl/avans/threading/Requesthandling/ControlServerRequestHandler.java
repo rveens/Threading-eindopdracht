@@ -156,6 +156,9 @@ public class ControlServerRequestHandler extends RequestHandler {
                 }
             } else if (reqparser.getUrl().equals("/users.html")) {
                 handleUsersPOSTRequest();
+            } else if (reqparser.getUrl().equals("/login.html") && contentBody.get("logout") != null) {
+                buildSessionHeader(null);
+                sendRedirect("/");
             } else {
                 throw new HTTPInvalidRequestException(400, "POST for this form not required");
             }
@@ -282,7 +285,7 @@ public class ControlServerRequestHandler extends RequestHandler {
         AuthenticationHandler authHandler = AuthenticationHandler.getInstance();
         final String secureCookiePart = "; Expires= " + WebserverConstants.DATE_FORMAT_RESPONSE.format(System.currentTimeMillis() + WebserverConstants.MAX_SESSION_AGE) + "; Secure; HttpOnly";
         //sessionHeader = "Set-Cookie: userId=1" + secureCookiePart + "\n";
-        sessionHeader = "Set-Cookie: sessionId=" + authHandler.setSession(username) + secureCookiePart;
+        sessionHeader = "Set-Cookie: sessionId=" + (username != null ? authHandler.setSession(username) : "") + secureCookiePart;
     }
 
 

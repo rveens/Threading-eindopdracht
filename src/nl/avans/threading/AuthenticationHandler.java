@@ -73,14 +73,14 @@ public class AuthenticationHandler
         //get user information
         String[] userCredentials = dataIOHandler.getUserCredentials(userName); //TODO only get bool from ioHandler
         boolean isAdmin = (userCredentials[3] != null);
-        //int userId = Integer.parseInt(userCredentials[0]);
+        int userId = Integer.parseInt(userCredentials[0]);
 
         //Create random session hash
         String sessionId = nextSessionId();
 
         //Create session information data object
         SessionData userSessionData = new SessionData();
-        //userSessionData.userId = userId;
+        userSessionData.userId = userId;
         userSessionData.securityLevel = (isAdmin ? WebserverConstants.SECURITYLEVEL_ADMIN : WebserverConstants.SECURITYLEVEL_SUPERUSER);
         userSessionData.timeStampCreation = System.currentTimeMillis();
 
