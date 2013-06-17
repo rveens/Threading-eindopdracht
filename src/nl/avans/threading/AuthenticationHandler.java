@@ -56,8 +56,8 @@ public class AuthenticationHandler
                 sessionStorage.remove(sessionId);
                 return false;
             }
-            if (userSessionData.userId != userId) //sessionId does not belong to current user
-                return false;
+            //if (userSessionData.userId != userId) //sessionId does not belong to current user
+            //    return false;
             return true; //everything is ok!
         }
     }
@@ -70,13 +70,18 @@ public class AuthenticationHandler
     {
         Logger logger = Logger.getInstance();
         DataIOHandler dataIOHandler = DataIOHandler.getInstance();
+        //get user information
+        String[] userCredentials = dataIOHandler.getUserCredentials(userName); //TODO only get bool from ioHandler
+        boolean isAdmin = (userCredentials[3] != null);
+        //int userId = Integer.parseInt(userCredentials[0]);
+
         //Create random session hash
         String sessionId = nextSessionId();
 
         //Create session information data object
         SessionData userSessionData = new SessionData();
-        userSessionData.userId = 1; //TODO get from DataIOHandler
-        userSessionData.securityLevel = WebserverConstants.SECURITYLEVEL_ADMIN; //TODO get from DataIOHandler
+        //userSessionData.userId = userId;
+        userSessionData.securityLevel = (isAdmin ? WebserverConstants.SECURITYLEVEL_ADMIN : WebserverConstants.SECURITYLEVEL_SUPERUSER);
         userSessionData.timeStampCreation = System.currentTimeMillis();
 
         //add session to storage

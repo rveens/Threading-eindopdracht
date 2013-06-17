@@ -132,9 +132,9 @@ public class DataIOHandler {
     }
 
     /*
-    *  @return all fields of user (from DB) as string-array: ["id", "username", "password"]
+    *  @return all fields of user (from DB) as string-array: ["id", "username", "password", isAdmin]
     */
-    private String[] getUserCredentials(String username)
+    public String[] getUserCredentials(String username)
     {
         String[] result = null;
         try {
@@ -144,12 +144,11 @@ public class DataIOHandler {
             ResultSet resultSet = prepStatement.executeQuery();
 
             if (resultSet.next()) {
-                result = new String[3];
+                result = new String[4];
                 result[0] = resultSet.getString(1); //ID
                 result[1] = resultSet.getString(2); //NAME
                 result[2] = resultSet.getString(3); //PASSWORD
-                //for (String s : result)
-                //    System.out.println(s);
+                result[3] = (resultSet.getBoolean(4) ? "" : null); //IsADMIN
             }
             dbConnection.close();
         } catch (SQLException e) {

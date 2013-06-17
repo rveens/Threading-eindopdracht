@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-<entry key="db-username">root</entry>
-<entry key="control-port">8081</entry>
-<entry key="web-root">/home/rick/Documents/webroot/</entry>
 <entry key="control-web-root">./ControlPanelHTML</entry>
+<entry key="db-username">root</entry>
+<entry key="directoryBrowsing">false</entry>
+<entry key="control-port">8082</entry>
+<entry key="web-root">.%2FControlPanelHTM</entry>
 <entry key="log-location">log.txt</entry>
 <entry key="db-name">webservAuth</entry>
 <entry key="db-url">jdbc:mysql://localhost:3306/</entry>
-<entry key="db-password">test</entry>
+<entry key="db-password">phe4yc</entry>
 <entry key="default-control-page">login.html</entry>
 <entry key="web-port">8080</entry>
 <entry key="default-page">index.html</entry>
-<entry key="directoryBrowsing">false</entry>
 </properties>

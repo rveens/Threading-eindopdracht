@@ -143,7 +143,7 @@ public class ControlServerRequestHandler extends RequestHandler {
                     logger.LogMessage("Login attempt failed");
                     sendResponse(Settings.controlWebRoot + "/login.html");
                 }
-            } else if (contentBody.get("inputWebPort") != null) { // check if post came from settings-page
+            } else if (contentBody.get("inputWebPort") != null && reqparser.getUrl().equals("/settings.html")) { // check if post came from settings-page
                 if (handleSettingsFormData(contentBody)) {
                     logger.LogMessage("Settings change attempt succeeded");
                     //sendTextResponse("Settings applied, server will restart"); //GIVE PAGE WITH SERVER WILL REBOOT
@@ -256,7 +256,7 @@ public class ControlServerRequestHandler extends RequestHandler {
         Integer securityLvlPage = Settings.authorisationLookupGETReq.get(pageURL);
         if (securityLvlPage == null)
             securityLvlPage = WebserverConstants.SECURITYLEVEL_ADMIN;
-        return (authHandler.isValidSession(1, reqparser.getCookies().get("sessionId"), securityLvlPage));
+        return (authHandler.isValidSession(0, reqparser.getCookies().get("sessionId"), securityLvlPage));
     }
 
     private boolean isAuthenticatedForPOSTRequest(String pageURL)
@@ -281,8 +281,8 @@ public class ControlServerRequestHandler extends RequestHandler {
     {
         AuthenticationHandler authHandler = AuthenticationHandler.getInstance();
         final String secureCookiePart = "; Expires= " + WebserverConstants.DATE_FORMAT_RESPONSE.format(System.currentTimeMillis() + WebserverConstants.MAX_SESSION_AGE) + "; Secure; HttpOnly";
-        sessionHeader = "Set-Cookie: userId=1" + secureCookiePart + "\n";
-        sessionHeader += "Set-Cookie: sessionId=" + authHandler.setSession(username) + secureCookiePart;
+        //sessionHeader = "Set-Cookie: userId=1" + secureCookiePart + "\n";
+        sessionHeader = "Set-Cookie: sessionId=" + authHandler.setSession(username) + secureCookiePart;
     }
 
 

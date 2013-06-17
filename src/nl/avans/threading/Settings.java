@@ -33,7 +33,7 @@ public class Settings {
         authorisationLookupGETReq.put("/", 2);
         authorisationLookupGETReq.put("/login.html", 2);
         authorisationLookupGETReq.put("/settings.html", 1);
-        authorisationLookupGETReq.put("/logs", 1);
+        authorisationLookupGETReq.put("/log", 1);
         //authorisationLookupGETReq.put("/users.html", 0); //this is commented out, to check if '.users.html' has level 0 as default
     }
 
