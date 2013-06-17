@@ -116,7 +116,7 @@ public class RequestHandler implements Runnable {
             if (!f.exists()) {
                 sendResponse(404, "Page not found");
                 return;
-            } else if (f.isDirectory() && Settings.directoryBrowsing) {
+            } else if (f.isDirectory() && Settings.directoryBrowsing && !(this instanceof ControlServerRequestHandler) ) {
                 sendDirectoryListingResponse(f);
                 return;
             } else if (f.isDirectory()) {
