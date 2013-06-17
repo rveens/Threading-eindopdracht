@@ -1,8 +1,6 @@
 package nl.avans.threading.Requesthandling;
 
-import nl.avans.threading.DataIOHandler;
-import nl.avans.threading.Settings;
-import nl.avans.threading.SettingsIOHandler;
+import nl.avans.threading.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -27,6 +25,8 @@ import java.util.Hashtable;
  * Time: 13:11
  */
 public class ControlServerRequestHandler extends RequestHandler {
+
+    private String sessionHeader;
 
     public ControlServerRequestHandler(Socket sok) {
         super(sok);
@@ -171,6 +171,7 @@ public class ControlServerRequestHandler extends RequestHandler {
             if (contentBody.get("username") != null) { // check if post came from login-page
                 if (handleLoginFormData(contentBody)) {
                     logger.LogMessage("Login attempt succeeded");
+                    buildSessionHeader(contentBody.get("username"));
                     handleGETsettingsRequest();
                     //sendResponse(Settings.controlWebRoot + "/settings.html");
                 }
@@ -214,6 +215,26 @@ public class ControlServerRequestHandler extends RequestHandler {
     @Override
     protected boolean isAuthenticated(String pageURL)
     {
-        return true;
+        // only for <webroot>/login.html and <webroot>/css and <webroot>/js and <webroot>/img is no authentication needed
+        return true;//(pageURL.equals(Settings.controlWebRoot + "/login.html") || pageURL.contains(Settings.controlWebRoot + "/css/") || pageURL.contains(Settings.controlWebRoot + "/js/"));
     }
+
+    @Override
+    protected String getSessionHeader()
+    {
+        if (sessionHeader != null)
+            return sessionHeader;
+        else
+            return "";
+    }
+
+    private void buildSessionHeader(String username)
+    {
+        AuthenticationHandler authHandler = AuthenticationHandler.getInstance();
+        final String secureCookiePart = "; Expires= " + WebserverConstants.DATE_FORMAT_RESPONSE.format(System.currentTimeMillis() + authHandler.MAX_SESSION_AGE) + "; Secure; HttpOnly";
+        sessionHeader = "Set-Cookie: userId=1" + secureCookiePart + "\n";
+        sessionHeader += "Set-Cookie: sessionId=" + authHandler.setSession(username) + secureCookiePart;
+    }
+
+
 }

@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Hashtable;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Created with IntelliJ IDEA.
@@ -84,6 +85,9 @@ public class WebserverConstants {
     public final static int LOGGER_QUEUE_MAX_SIZE = 10;
     public final static DateFormat DATE_FORMAT_RESPONSE = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH); // Mon, 23 May 2005 22:38:34 GMT
     public final static DateFormat DATE_FORMAT_LOG      = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //2013-06-03 19:36:22
+    static {
+        DATE_FORMAT_RESPONSE.setTimeZone(TimeZone.getTimeZone("GMT"));
+    }
 
     public final static int FILE_READ_CHUNK_SIZE = 1024;
 }

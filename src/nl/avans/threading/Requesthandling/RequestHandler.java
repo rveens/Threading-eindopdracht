@@ -164,7 +164,7 @@ public class RequestHandler implements Runnable {
             if (!f.exists())
                 throw new Exception("Path to error page is not valid");
             // send initial line of header
-            out.writeBytes(createInitialResponseLine(200, reqparser.getHttpVersion()));
+            out.writeBytes(createInitialResponseLine(responseCode, reqparser.getHttpVersion()));
             // send headers (also get file content-type and length)
             out.writeBytes(createResponsHeaders(Files.probeContentType(f.toPath()), (int) f.length()));
 
@@ -283,6 +283,7 @@ public class RequestHandler implements Runnable {
         // TODO use stringbuilder
         String headers;
         Date currentTime;
+        final String sessionHeader = getSessionHeader();
 
         headers = "";
         currentTime = new Date();
@@ -291,9 +292,17 @@ public class RequestHandler implements Runnable {
         headers += "Server: SuperWebserver/0.1 (" + System.getProperty("os.name") + ")" + '\n';
         headers += "Content-Type: " + contentType + '\n';
         headers += "Content-Length: " + contentLength + '\n';
+        if (!sessionHeader.equals(""))
+            headers += sessionHeader + '\n';
 
         headers += "\r\n";
 
         return headers;
+    }
+
+    protected String getSessionHeader()
+    {
+        //session is never needed
+        return "";
     }
 }
