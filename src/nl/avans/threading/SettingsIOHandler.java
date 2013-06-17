@@ -69,6 +69,7 @@ public class SettingsIOHandler {
             properties.setProperty("control-port", "" + controlPort);
             properties.setProperty("web-root", webRoot);
             properties.setProperty("default-page", defaultPage);
+            properties.setProperty("directoryBrowsing", dirBrowsing ? "true" : "false");
 
             //save properties to project root folder
             properties.storeToXML(new FileOutputStream(Settings.SettingsFileLocation), null);

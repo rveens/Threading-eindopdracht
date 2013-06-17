@@ -108,7 +108,8 @@ public class ControlServerRequestHandler extends RequestHandler {
             Elements defpage = doc.select("#inputDefaultPage");
             defpage.get(0).attr("value", Settings.defaultPage);
             Elements dirbrowse = doc.select("#inputDirectoryBrowsing");
-            dirbrowse.get(0).attr("value", Boolean.toString(Settings.directoryBrowsing));
+            if (Settings.directoryBrowsing)
+                dirbrowse.get(0).attr("checked", "");
 
             /* wijzigingen opslaan naar de temp file */
             PrintWriter writer = new PrintWriter(ft, "UTF-8");
@@ -209,7 +210,7 @@ public class ControlServerRequestHandler extends RequestHandler {
                 Integer.parseInt(contentBody.get("inputControlPort")),
                 contentBody.get("inputWebroot"),
                 contentBody.get("inputDefaultPage"),
-                false));
+                contentBody.get("directorybrowsing") != null));
     }
 
     @Override
