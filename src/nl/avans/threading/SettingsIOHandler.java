@@ -39,7 +39,7 @@ public class SettingsIOHandler {
             Settings.defaultPage = properties.getProperty("default-page", "index.html");
             Settings.defaultControlPage = properties.getProperty("default-control-page", "login.html");
             Settings.logLocation = properties.getProperty("log-location", "log.txt");
-            Settings.directoryBrowsing = Boolean.getBoolean(properties.getProperty("directoryBrowsing", "false"));
+            Settings.directoryBrowsing = Boolean.valueOf(properties.getProperty("directoryBrowsing", "false"));
 
         } catch (Exception e) {
             System.out.println("ERROR settings.xml document is not wel formed");
@@ -69,6 +69,7 @@ public class SettingsIOHandler {
             properties.setProperty("control-port", "" + controlPort);
             properties.setProperty("web-root", webRoot);
             properties.setProperty("default-page", defaultPage);
+            properties.setProperty("directoryBrowsing", dirBrowsing ? "true" : "false");
 
             //save properties to project root folder
             properties.storeToXML(new FileOutputStream(Settings.SettingsFileLocation), null);

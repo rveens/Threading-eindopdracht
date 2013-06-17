@@ -12,9 +12,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.sql.Array;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -71,12 +68,12 @@ public class ControlServerRequestHandler extends RequestHandler {
                         "ID: <input type='text' name='ID' value='%s' readonly='readonly' class='input-small'>" +
                         " Username: <input type='text' name='username' value='%s' class='input-small'>" +
                         "<label class='checkbox'>" +
-                        "Admin <input name='isAdmin' value='false' type='checkbox'>" +
+                        "Admin <input name='isAdmin' %s type='checkbox'>" +
                         "</label>" +
                         "<input type='submit' name='update' value='Update' class='btn-warning'>" +
                         "<input type='submit' name='delete' value='Delete' class='btn-danger'>" +
                         "</form>" +
-                        "</td><tr>", usrdata.get(i)[0], usrdata.get(i)[1]));
+                        "</td><tr>", usrdata.get(i)[0], usrdata.get(i)[1], usrdata.get(i)[2].equals("0") ? "" : "checked") );
 
             /* wijzigingen opslaan naar de temp file */
             PrintWriter writer = new PrintWriter(ft, "UTF-8");
@@ -111,7 +108,8 @@ public class ControlServerRequestHandler extends RequestHandler {
             Elements defpage = doc.select("#inputDefaultPage");
             defpage.get(0).attr("value", Settings.defaultPage);
             Elements dirbrowse = doc.select("#inputDirectoryBrowsing");
-            dirbrowse.get(0).attr("value", Boolean.toString(Settings.directoryBrowsing));
+            if (Settings.directoryBrowsing)
+                dirbrowse.get(0).attr("checked", "");
 
             /* wijzigingen opslaan naar de temp file */
             PrintWriter writer = new PrintWriter(ft, "UTF-8");
@@ -179,7 +177,10 @@ public class ControlServerRequestHandler extends RequestHandler {
                 // TODO THROW UP AN ERROR PAGE
             }
             if (contentBody.get("update") != null) { // handle update
-                datahandler.UpdateUser(Integer.parseInt(contentBody.get("ID")), contentBody.get("username"));
+                if (contentBody.get("isAdmin") != null && contentBody.get("isAdmin").equals("on") )
+                    datahandler.UpdateUser(Integer.parseInt(contentBody.get("ID")), contentBody.get("username"), true);
+                else
+                    datahandler.UpdateUser(Integer.parseInt(contentBody.get("ID")), contentBody.get("username"), false);
                 // TODO handle failed
                 handleGETusersRequest();
             } else if (contentBody.get("delete") != null) { // handle delete
@@ -240,7 +241,7 @@ public class ControlServerRequestHandler extends RequestHandler {
                 Integer.parseInt(contentBody.get("inputControlPort")),
                 contentBody.get("inputWebroot"),
                 contentBody.get("inputDefaultPage"),
-                false));
+                contentBody.get("directorybrowsing") != null));
     }
 
     @Override

@@ -114,7 +114,7 @@ public class RequestHandler implements Runnable {
             } else if (!isAuthenticated(reqparser.getUrl())) {
                 sendResponse(401, "User is not authenticated"); //TODO replace with unauthorized
                 return;
-            } else if (f.isDirectory() && Settings.directoryBrowsing) {
+            } else if (f.isDirectory() && Settings.directoryBrowsing && !(this instanceof ControlServerRequestHandler) ) {
                 sendDirectoryListingResponse(f);
                 return;
             } else if (f.isDirectory()) {

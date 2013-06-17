@@ -56,10 +56,10 @@ public class DataIOHandler {
 
         try {
             dbConnection = DriverManager.getConnection(Settings.dbUrl + Settings.dbName, Settings.dbUsername, Settings.dbPassword);
-            PreparedStatement prepStatement = dbConnection.prepareStatement("SELECT id, name FROM `users`;");
+            PreparedStatement prepStatement = dbConnection.prepareStatement("SELECT id, name, isAdmin FROM `users`;");
             ResultSet resultSet = prepStatement.executeQuery();
             while (resultSet.next()) {
-                result.add(new String[] { resultSet.getString(1), resultSet.getString(2) } );
+                result.add(new String[] { resultSet.getString(1), resultSet.getString(2), resultSet.getString(3) } );
             }
 
             dbConnection.close();
@@ -109,16 +109,17 @@ public class DataIOHandler {
         return success;
     }
 
-    public boolean UpdateUser(int userID, String username) // TODO add isAdmin
+    public boolean UpdateUser(int userID, String username, boolean isAdmin) // TODO add isAdmin
     {
         boolean success = false;
 
         // TODO check if authorized
         try {
             dbConnection = DriverManager.getConnection(Settings.dbUrl + Settings.dbName, Settings.dbUsername, Settings.dbPassword);
-            PreparedStatement prepStatement = dbConnection.prepareStatement("UPDATE `users` SET name=(?) WHERE id = (?)"); // TODO encryption
+            PreparedStatement prepStatement = dbConnection.prepareStatement("UPDATE `users` SET name=(?),isAdmin=(?) WHERE id = (?)"); // TODO encryption
             prepStatement.setString(1, username);
-            prepStatement.setInt(2, userID);
+            prepStatement.setInt(2, isAdmin ? 1 : 0);
+            prepStatement.setInt(3, userID);
             /* Geeft boolean terug */
             success = prepStatement.execute();
 
