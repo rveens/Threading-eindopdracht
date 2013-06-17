@@ -99,7 +99,7 @@ public class HTTPRequestParser {
                 try {
                     parseContentbody(URLDecoder.decode(new String(buffer), "UTF-8"));
                 } catch (Exception e) {
-                    System.out.println(e.getMessage());
+                    throw new HTTPInvalidRequestException(400, e.getMessage());
                 }
                 System.out.println(buffer);
             }
