@@ -61,8 +61,8 @@ public class SettingsIOHandler {
         //TODO check if webroot and defaultpage is valid
 
         try {
-            webRoot = encodeParam(webRoot);
-            defaultPage = encodeParam(defaultPage);
+            webRoot = encodeParamPath(webRoot);
+            defaultPage = encodeParamFile(defaultPage);
 
             //set the properties value
             properties.setProperty("web-port", "" + webPort);
@@ -87,14 +87,27 @@ public class SettingsIOHandler {
     /**
     *   Encode parameter to prevent xml-injection
     */
-    private static String encodeParam(String param) throws Exception {
+    private static String encodeParamPath(String param) throws Exception {
         //DONE prevent xml-injection by escaping characters like '<' and "'"
         if (!(param == null)) {
-            if (!param.matches("^[a-zA-Z0-9.-/]+$")) //white listing
+            if (!param.matches("^[a-zA-Z0-9-/:]+$")) //white listing
                 throw new Exception("Possible injection detected");
         }
         return param;
     }
+
+    /**
+     *   Encode parameter to prevent xml-injection
+     */
+    private static String encodeParamFile(String param) throws Exception {
+        //DONE prevent xml-injection by escaping characters like '<' and "'"
+        if (!(param == null)) {
+            if (!param.matches("^[a-zA-Z0-9.-]+$")) //white listing
+                throw new Exception("Possible injection detected");
+        }
+        return param;
+    }
+
 
     private static void handlePropertyLoading()
     {
