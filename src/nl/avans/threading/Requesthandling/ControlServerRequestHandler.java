@@ -134,7 +134,7 @@ public class ControlServerRequestHandler extends RequestHandler {
 
         Hashtable<String, String> contentBody = reqparser.getContentBody();
         if (contentBody != null) {
-            if (contentBody.get("username") != null) { // check if post came from login-page
+            if (contentBody.get("username") != null && reqparser.getUrl().equals("/")) { // check if post came from login-page
                 if (handleLoginFormData(contentBody)) {
                     logger.LogMessage("Login attempt succeeded");
                     buildSessionHeader(contentBody.get("username"));
