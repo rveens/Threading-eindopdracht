@@ -117,7 +117,7 @@ public class DataIOHandler {
         try {
             dbConnection = DriverManager.getConnection(Settings.dbUrl + Settings.dbName, Settings.dbUsername, Settings.dbPassword);
             PreparedStatement prepStatement = dbConnection.prepareStatement("UPDATE `users` SET name=(?),isAdmin=(?) WHERE id = (?)"); // TODO encryption
-            prepStatement.setString(1, username);
+            prepStatement.setString(1, encodeParam(username));
             prepStatement.setInt(2, isAdmin ? 1 : 0);
             prepStatement.setInt(3, userID);
             /* Geeft boolean terug */
@@ -126,6 +126,8 @@ public class DataIOHandler {
             dbConnection.close();
         } catch (SQLException e) {
             System.out.println("SQLException: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
 
         return success;
@@ -182,5 +184,16 @@ public class DataIOHandler {
             e.printStackTrace(); //WILL NEVER HAPPEN
             return null;
         }
+    }
+
+    /**
+     *   Encode parameter to prevent injection using white-listing
+     */
+    private static String encodeParam(String param) throws Exception {
+        if (!(param == null)) {
+            if (!param.matches("^[a-zA-Z0-9-_]+$")) //white listing
+                throw new Exception("Possible injection detected");
+        }
+        return param;
     }
 }
